@@ -10,7 +10,11 @@
 #define MAX_CLIENTS 10
 #define BUFFER_SIZE 1024
 
-int main() {
+int main(int argc, char **argv) {
+    if (argc != 3)
+        return (0);
+    std::string pass = argv[2];
+    int port = std::atoi(argv[1]);
     int listenSocket, clientSocket;
     struct sockaddr_in serverAddress;
     std::vector<pollfd> fds(MAX_CLIENTS + 1); // +1 pour le socket d'écoute
@@ -26,7 +30,7 @@ int main() {
     memset(&serverAddress, 0, sizeof(serverAddress));
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY;
-    serverAddress.sin_port = htons(8080); // Port d'écoute
+    serverAddress.sin_port = htons(port); // Port d'écoute
 
     // Lier le socket d'écoute à l'adresse et au port spécifiés
     if (bind(listenSocket, reinterpret_cast<struct sockaddr*>(&serverAddress), sizeof(serverAddress)) < 0) {
@@ -80,15 +84,14 @@ int main() {
                         // Ajouter le socket client à la structure pollfd
                         fds[i].fd = clientSocket;
                         fds[i].events = POLLIN;
-
-                        std::cout << "Cient " << i  << " connecté" << std::endl;
+                        //send(fds[i].fd, ":serveur-irc 464 client :Mot de passe requis", 45, 0);
+                        
                     }
                 } else {
                     // Événement sur un socket client existant (données reçues)
-                    char buffer[BUFFER_SIZE];
-                    memset(buffer, 0, sizeof(buffer));
+                    std::string buffer(BUFFER_SIZE, '\0');
 
-                    int bytesRead = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+                    int bytesRead = recv(fds[i].fd, &buffer[0], buffer.size(), 0);
                     if (bytesRead < 0) {
                         if (errno != EWOULDBLOCK && errno != EAGAIN) {
                             perror("Erreur lors de la lecture des données");
@@ -101,8 +104,15 @@ int main() {
 
                         std::cout << "Connexion fermée client " << i << std::endl;
                     } else {
-                        // Traiter les données reçues
-                        std::cout << "Client " << i << " : " << buffer << std::endl;
+                        if (pass == buffer.substr(buffer.find("PASS") + 5, pass.length()) && !std::isalpha(buffer[buffer.find("PASS") + 5 + pass.length()]))
+                        {
+                            std::cout << "Cient " << i  << " connecté" << std::endl;
+                            std::cout << "Client " << i << " : " << buffer << std::endl;
+                        }
+                        else
+                        {
+                            send(fds[i].fd, ":serveur-irc 464 client :Mot de passe requis", 45, 0);
+                        }
                     }
                 }
             }
