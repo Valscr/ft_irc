@@ -1,19 +1,30 @@
-#include <iostream>
-#include <vector>
-#include <list>
-#include <cstring>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <poll.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
+/*   Updated: 2023/07/06 15:52:57 by valentin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define MAX_CLIENTS 10
-#define BUFFER_SIZE 1024
+#include "irc.hpp"
 
-int main(int argc, char **argv) {
+std::string find_next_word(int i, std::string str)
+{
+    int j = i;
+    while (std::isalpha(str[i]))
+        i++;
+    return (str.substr(j, i -j));
+}
+
+int main(int argc, char **argv)
+{
     if (argc != 3)
         return (0);
+    User user;
     std::string pass = argv[2];
     int port = std::atoi(argv[1]);
     int password[MAX_CLIENTS];
@@ -107,15 +118,20 @@ int main(int argc, char **argv) {
                         // Connexion fermée par le client
                         close(fds[i].fd);
                         fds[i].fd = -1;
-                        std::cout << "Connexion fermée client " << i << std::endl;
+                        user.printUsername(i); std::cout << " déconnecté" << std::endl;
                     } 
                     else if (password[i] == 0)
                     {
-                        if (pass == buffer.substr(buffer.find("PASS") + 5, pass.length()) && !std::isalpha(buffer[buffer.find("PASS") + 5 + pass.length()]))
+                        if (pass == find_next_word(buffer.find("PASS") + 5, buffer))
                         {
-                            std::cout << "Cient " << i  << " connecté" << std::endl;
-                            send(fds[i].fd, "Bienvenu sur le serveur\n", 25, 0);
-                            std::cout << buffer << std::endl;
+                            
+                            //send(fds[i].fd, "Bienvenu sur le serveur\n", 25, 0);
+                            send(fds[i].fd, ":serveur-irc 001 valentin :Bienvenue sur le serveur IRC\n", 57, 0);
+                            user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
+                            user.setUsername(find_next_word(buffer.find("USER") + 5, buffer), i);
+                            user.printUsername(i); std::cout << " connecté" << std::endl;
+                            user.printUsername(i); std::cout << " : " << buffer << std::endl;
+                           
                             password[i] = 1;
                         }
                         else
@@ -126,7 +142,8 @@ int main(int argc, char **argv) {
                     }
                     else
                     {
-                        std::cout << "Client " << i << " : " << buffer << std::endl;
+                        
+                        user.printUsername(i); std::cout << " : " << buffer << std::endl;
                     }
             }
             }
