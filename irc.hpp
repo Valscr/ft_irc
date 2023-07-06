@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/06 17:13:05 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/06 23:43:24 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,36 +29,44 @@
 class User
 {
     private:
-        std::string _nickname[MAX_CLIENTS];
-        std::string _username[MAX_CLIENTS];
+        std::string _nickname[MAX_CLIENTS + 1];
+        std::string _username[MAX_CLIENTS + 1];
     public:
         User();
         ~User() {};
-        void setNickname(std::string nickname, int i);
+        int setNickname(std::string nickname, int i);
         void setUsername(std::string username, int i);
         std::string returnNickname(int i);
         std::string returnUsername(int i);
 };
 
+std::string find_next_word(int i, std::string str);
+
 User::User()
 {
-    for (int i = 0; i < MAX_CLIENTS; i++)
+    for (int i = 0; i <= MAX_CLIENTS; i++)
     {
-        setNickname(("Client " + std::to_string(i)).c_str(), i);
+        this->_nickname[i] = ("Client " + std::to_string(i)).c_str();
         setUsername(("Client " + std::to_string(i)).c_str(), i);
     }
 }
-void User::setNickname(std::string nickname, int i)
+
+int User::setNickname(std::string nickname, int i)
 {
     if (!nickname.empty())
     {
         for (int j = 0; j <= MAX_CLIENTS; j++)
         {
             if (nickname == this->_nickname[j])
-                throw std::runtime_error("nickname already used\n");
+            {
+                this->_nickname[i] = (nickname + "_").c_str();
+                return (0);
+            }
         }
         this->_nickname[i] = nickname;
+        return (0);
     }
+    return (1);
 }
 
 void User::setUsername(std::string username, int i)
