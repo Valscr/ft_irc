@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/06 15:52:57 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/06 17:14:53 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ int main(int argc, char **argv)
                         // Ajouter le socket client à la structure pollfd
                         fds[i].fd = clientSocket;
                         fds[i].events = POLLIN;
-                        //send(fds[i].fd, ":serveur-irc 464 client :Mot de passe requis", 45, 0);
                         
                     }
                 } else {
@@ -118,32 +117,36 @@ int main(int argc, char **argv)
                         // Connexion fermée par le client
                         close(fds[i].fd);
                         fds[i].fd = -1;
-                        user.printUsername(i); std::cout << " déconnecté" << std::endl;
+                        std::cout << user.returnNickname(i) << " déconnecté" << std::endl;
                     } 
                     else if (password[i] == 0)
                     {
                         if (pass == find_next_word(buffer.find("PASS") + 5, buffer))
                         {
-                            
-                            //send(fds[i].fd, "Bienvenu sur le serveur\n", 25, 0);
-                            send(fds[i].fd, ":serveur-irc 001 valentin :Bienvenue sur le serveur IRC\n", 57, 0);
+                            try {
                             user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
                             user.setUsername(find_next_word(buffer.find("USER") + 5, buffer), i);
-                            user.printUsername(i); std::cout << " connecté" << std::endl;
-                            user.printUsername(i); std::cout << " : " << buffer << std::endl;
-                           
+                            }
+                            catch (const std::runtime_error& e)
+                            {
+                                std::cout << e.what();
+                                send(fds[i].fd, (":serveur-irc 433 " + find_next_word(buffer.find("USER") + 5, buffer) + " :Nickname is already use\n").c_str(), 18 + find_next_word(buffer.find("USER") + 5, buffer).length() + 27, 0);
+                                continue;
+                            }
+                            std::cout << user.returnNickname(i) << " connecté" << std::endl;
+                            std::cout << user.returnNickname(i) << " : " << buffer << std::endl;
+                            send(fds[i].fd, (":serveur-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC\n").c_str(), 18 + 32 + user.returnNickname(i).length(), 0);
                             password[i] = 1;
                         }
                         else
                         {
-                            //fds[i].events = POLLOUT;
                             send(fds[i].fd, ":serveur-irc 464 client :Mot de passe requis\n", 46, 0);
                         }
                     }
                     else
                     {
                         
-                        user.printUsername(i); std::cout << " : " << buffer << std::endl;
+                        std::cout << user.returnNickname(i) << " : " << buffer << std::endl;
                     }
             }
             }

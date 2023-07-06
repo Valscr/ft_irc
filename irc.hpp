@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/06 15:12:21 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/06 17:13:05 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,29 @@ class User
         ~User() {};
         void setNickname(std::string nickname, int i);
         void setUsername(std::string username, int i);
-        void printUsername(int i);
-        void printNickname(int i);
+        std::string returnNickname(int i);
+        std::string returnUsername(int i);
 };
 
 User::User()
 {
     for (int i = 0; i < MAX_CLIENTS; i++)
     {
-        setNickname("Client " + std::to_string(i), i);
-        setUsername("Client " + std::to_string(i), i);
+        setNickname(("Client " + std::to_string(i)).c_str(), i);
+        setUsername(("Client " + std::to_string(i)).c_str(), i);
     }
 }
 void User::setNickname(std::string nickname, int i)
 {
     if (!nickname.empty())
+    {
+        for (int j = 0; j <= MAX_CLIENTS; j++)
+        {
+            if (nickname == this->_nickname[j])
+                throw std::runtime_error("nickname already used\n");
+        }
         this->_nickname[i] = nickname;
+    }
 }
 
 void User::setUsername(std::string username, int i)
@@ -60,14 +67,14 @@ void User::setUsername(std::string username, int i)
         this->_username[i] = username;
 }
 
-void User::printUsername(int i)
+std::string User::returnNickname(int i)
 {
-    std::cout << this->_username[i];
+    return (this->_nickname[i]);
 }
 
-void User::printNickname(int i)
+std::string User::returnUsername(int i)
 {
-    std::cout << this->_nickname[i];
+    return (this->_username[i]);
 }
 
 #endif
