@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/06 23:43:24 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/07 12:01:27 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ int User::setNickname(std::string nickname, int i)
     {
         for (int j = 0; j <= MAX_CLIENTS; j++)
         {
-            if (nickname == this->_nickname[j])
+            if (nickname == this->_nickname[j] && j != i)
             {
                 this->_nickname[i] = (nickname + "_").c_str();
-                return (0);
+                return (1);
             }
         }
         this->_nickname[i] = nickname;

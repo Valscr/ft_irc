@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/07 00:07:08 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/07 13:48:59 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,29 @@
 std::string find_next_word(int i, std::string str)
 {
     int j = i;
-    while ((std::isalpha(str[i]) && i < str.length()) || (str[i] != '\r' && str[i] != '\0' && str[i] != ' '))
+    while (str[i] != '\r' && str[i] != '\0' && str[i] != ' ' && str[i] != '\n')
         i++;
     return (str.substr(j, i - j));
 }
 
-void parse_buffer(std::string buffer, User user, int i)
+void parse_buffer(std::string buffer, User &user, int i)
 {
     if (!buffer.find("NICK"))
     {
         user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
     }
+}
+
+void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds)
+{
+    std::vector<std::string>::const_iterator it;
+    for (it = send_client.begin(); it != send_client.end(); ++it)
+    {
+        const std::string& str = *it;
+        const char* data = str.c_str(); 
+        send(fds[i].fd, data, std::strlen(data), 0);
+    }
+    send_client.clear();
 }
 
 int main(int argc, char **argv)
@@ -36,11 +48,11 @@ int main(int argc, char **argv)
     int port = std::atoi(argv[1]);
     int nickname[MAX_CLIENTS + 1];
     int password[MAX_CLIENTS + 1];
-    int welcome[MAX_CLIENTS + 1];
     int listenSocket, clientSocket;
     struct sockaddr_in serverAddress;
     std::vector<pollfd> fds(MAX_CLIENTS + 1); // +1 pour le socket d'écoute
     User user;
+    std::vector<std::string> send_client(0);
     // Création du socket d'écoute
     listenSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (listenSocket < 0)
@@ -82,7 +94,6 @@ int main(int argc, char **argv)
         fds[j].events = POLLIN | POLLOUT;
         password[j] = 0;
         nickname[j] = 1;
-        welcome[j] = 0;
     }
     // Boucle principale pour attendre les événements
     while (true)
@@ -94,7 +105,7 @@ int main(int argc, char **argv)
             exit(1);
         }
         // Vérifier les événements sur les descripteurs de fichiers surveillés
-        for (size_t i = 0; i < fds.size(); i++)
+        for (size_t i = 0; i <= fds.size(); i++)
         {
             if (fds[i].revents)
             {
@@ -148,19 +159,19 @@ int main(int argc, char **argv)
                         {
                             password[i] = 1;
                             nickname[i] = user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
-                            if (nickname[i] == 1)
-                                send(fds[i].fd, (":server-irc 433 * " + find_next_word(buffer.find("NICK") + 5, buffer) + " :Nickname is already in use\n").c_str(), 19 + find_next_word(buffer.find("NICK") + 5, buffer).length() + 30, 0);
                             user.setUsername(find_next_word(buffer.find("USER") + 5, buffer), i);
-                            if (welcome[i] == 0)
+                            std::string nick = find_next_word(buffer.find("NICK") + 5, buffer);
+                            while (nickname[i] == 1)
                             {
-                                send(fds[i].fd, (":server-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC\n").c_str(), 17 + 32 + user.returnNickname(i).length(), 0);
-                                welcome[i] = 1;
+                                nickname[i] = user.setNickname(user.returnNickname(i), i);
+                                send_client.push_back((":server-irc 433 * " + nick + " :Nickname is already in use\n").c_str());
+                                nick = (nick + "_").c_str();
                             }
+                            send(fds[i].fd, (":server-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC\n").c_str(), 17 + 32 + user.returnNickname(i).length(), 0);
+                            send_function(send_client, i, fds);
                         }
                         else
-                        {
                             send(fds[i].fd, ":server-irc 464 client :Mot de passe requis\n", 45, 0);
-                        }
                     }
                     else
                     {
