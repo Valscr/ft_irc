@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/07 13:48:59 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/07 14:50:36 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ std::string find_next_word(int i, std::string str)
 
 void parse_buffer(std::string buffer, User &user, int i)
 {
-    if (!buffer.find("NICK"))
-    {
-        user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
-    }
+
 }
 
 void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds)
@@ -167,8 +164,8 @@ int main(int argc, char **argv)
                                 send_client.push_back((":server-irc 433 * " + nick + " :Nickname is already in use\n").c_str());
                                 nick = (nick + "_").c_str();
                             }
-                            send(fds[i].fd, (":server-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC\n").c_str(), 17 + 32 + user.returnNickname(i).length(), 0);
                             send_function(send_client, i, fds);
+                            send(fds[i].fd, (":server-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC " + user.returnNickname(i) + "\n").c_str(), 17 + 32 + 2 + user.returnNickname(i).length() + user.returnNickname(i).length(), 0);
                         }
                         else
                             send(fds[i].fd, ":server-irc 464 client :Mot de passe requis\n", 45, 0);
