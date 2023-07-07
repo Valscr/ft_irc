@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/07 14:50:36 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/07 18:09:47 by vescaffr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,16 @@
 std::string find_next_word(int i, std::string str)
 {
     int j = i;
-    while (str[i] != '\r' && str[i] != '\0' && str[i] != ' ' && str[i] != '\n')
-        i++;
-    return (str.substr(j, i - j));
+    while (str[j] != '\r' && str[j] != '\0' && str[j] != '\n' && str[j] != ' ')
+        j++;
+    return (str.substr(i, j - i));
 }
 
-void parse_buffer(std::string buffer, User &user, int i)
+std::string parse_buffer(std::string buffer, User &user, int i)
 {
-
+    if (buffer.find("PING") != std::string::npos)
+        return ("PONG server-irc\n");
+    return ("");
 }
 
 void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds)
@@ -45,6 +47,7 @@ int main(int argc, char **argv)
     int port = std::atoi(argv[1]);
     int nickname[MAX_CLIENTS + 1];
     int password[MAX_CLIENTS + 1];
+    int welcome[MAX_CLIENTS + 1];
     int listenSocket, clientSocket;
     struct sockaddr_in serverAddress;
     std::vector<pollfd> fds(MAX_CLIENTS + 1); // +1 pour le socket d'écoute
@@ -91,6 +94,7 @@ int main(int argc, char **argv)
         fds[j].events = POLLIN | POLLOUT;
         password[j] = 0;
         nickname[j] = 1;
+        welcome[j] = 0;
     }
     // Boucle principale pour attendre les événements
     while (true)
@@ -109,7 +113,7 @@ int main(int argc, char **argv)
                 if (fds[i].fd == listenSocket)
                 {
                     // Événement sur le socket d'écoute (nouvelle connexion entrante)
-                    clientSocket = accept(listenSocket, nullptr, nullptr);
+                    clientSocket = accept(listenSocket, NULL, NULL);
                     if (clientSocket < 0) {
                         if (errno != EWOULDBLOCK && errno != EAGAIN) {
                             perror("Erreur lors de l'acceptation de la connexion");
@@ -134,6 +138,7 @@ int main(int argc, char **argv)
                     std::string buffer(BUFFER_SIZE, '\0');
 
                     int bytesRead = recv(fds[i].fd, &buffer[0], buffer.size(), 0);
+                    std::cout << user.returnNickname(i) << " : " << buffer << std::endl;
                     if (bytesRead < 0)
                     {
                         if (errno != EWOULDBLOCK && errno != EAGAIN) {
@@ -147,33 +152,43 @@ int main(int argc, char **argv)
                         close(fds[i].fd);
                         fds[i].fd = -1;
                         std::cout << user.returnNickname(i) << " déconnecté" << std::endl;
-                        user.setUsername(("Client " + std::to_string(i)).c_str(), i);
-                        user.setNickname(("Client " + std::to_string(i)).c_str(), i);
+                        user.setUsername(("Client " + to_string(i)).c_str(), i);
+                        user.setNickname(("Client " + to_string(i)).c_str(), i);
                     } 
                     else if (password[i] == 0)
                     {
                         if (pass == find_next_word(buffer.find("PASS") + 5, buffer))
                         {
                             password[i] = 1;
-                            nickname[i] = user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
-                            user.setUsername(find_next_word(buffer.find("USER") + 5, buffer), i);
-                            std::string nick = find_next_word(buffer.find("NICK") + 5, buffer);
-                            while (nickname[i] == 1)
-                            {
-                                nickname[i] = user.setNickname(user.returnNickname(i), i);
-                                send_client.push_back((":server-irc 433 * " + nick + " :Nickname is already in use\n").c_str());
-                                nick = (nick + "_").c_str();
-                            }
-                            send_function(send_client, i, fds);
-                            send(fds[i].fd, (":server-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC " + user.returnNickname(i) + "\n").c_str(), 17 + 32 + 2 + user.returnNickname(i).length() + user.returnNickname(i).length(), 0);
                         }
                         else
+                        {
                             send(fds[i].fd, ":server-irc 464 client :Mot de passe requis\n", 45, 0);
+                        }
                     }
-                    else
+                    if (welcome[i] == 0 && buffer.find("NICK") != std::string::npos)
                     {
-                        parse_buffer(buffer, user, i);
-                        std::cout << user.returnNickname(i) << " : " << buffer << std::endl;
+                        nickname[i] = user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
+                        user.setUsername(find_next_word(buffer.find("USER") + 5, buffer), i);
+                        std::string nick = find_next_word(buffer.find("NICK") + 5, buffer);
+                        while (nickname[i] == 1)
+                        {
+                            nickname[i] = user.setNickname(user.returnNickname(i), i);
+                            send_client.push_back((":server-irc 433 * " + nick + " :Nickname is already in use\n").c_str());
+                            nick = (nick + "_").c_str();
+                        }
+                        send_function(send_client, i, fds);
+                        if (password[i] == 1)
+                        {
+                            send(fds[i].fd, (":server-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC " + user.returnNickname(i) + "\n").c_str(), 17 + 32 + 2 + user.returnNickname(i).length() + user.returnNickname(i).length(), 0);
+                            welcome[i] = 1;
+                        }
+                        std::cout << "USER = " << user.returnUsername(i) << std::endl;
+                    }
+                    if (welcome[i] == 1)
+                    {
+                        send_client.push_back(parse_buffer(buffer, user, i));
+                        send_function(send_client, i, fds);
                     }
                 }
             }
