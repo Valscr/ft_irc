@@ -1,18 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   irc.hpp                                            :+:      :+:    :+:   */
+/*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/07 22:26:59 by valentin         ###   ########.fr       */
+/*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
+/*   Updated: 2023/07/07 22:28:02 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IRC_HPP
-# define IRC_HPP
+#ifndef USER_HPP
+# define USER_HPP
 
+#include "irc.hpp"
 #include <iostream>
 #include <vector>
 #include <list>
@@ -26,18 +27,21 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cerrno>
-#include "Server.hpp"
-#include "User.hpp"
 
 #define MAX_CLIENTS 10
-#define BUFFER_SIZE 1024
 
-
-class User;
-class Server;
-//class Channel;
-
-std::string find_next_word(int i, std::string str);
-
+class User
+{
+    private:
+        std::string _nickname[MAX_CLIENTS + 1];
+        std::string _username[MAX_CLIENTS + 1];
+    public:
+        User();
+        ~User() {};
+        int setNickname(std::string nickname, int i);
+        void setUsername(std::string username, int i);
+        std::string returnNickname(int i);
+        std::string returnUsername(int i);
+};
 
 #endif
