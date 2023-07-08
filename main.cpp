@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 12:06:11 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 12:17:05 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ int main(int argc, char **argv)
                             exit(1);
                         }
                         server.set_fds_i_fd(i);
-                        server.add_bool_pass();
-                        server.add_bool_welcome();
                     }
                 }
                 else 
@@ -80,22 +78,19 @@ int main(int argc, char **argv)
                         server.close_fd(i);
                         std::cout << server.getUser(i).returnNickname() << " déconnecté" << std::endl;
                         server.deleteUser(i);
-                        server.delete_password_bool(i);
-                        server.delete_welcome_bool(i);
                     } 
                     else if (password[i] == false)
                     {
                         if (server.get_password() == find_next_word(buffer.find("PASS") + 5, buffer))
-                            password[i] =true;
+                            password[i] = true;
                         else
                             send(server.get_fds()[i].fd, ":server-irc 464 client :Mot de passe requis\n", 45, 0);
                     }
                     if (buffer.find("NICK") != std::string::npos)
                     {
-                        server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), find_next_word(buffer.find("USER") + 5, buffer), i);
-                        
                         if (password[i] == true)
                         {
+                            server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), find_next_word(buffer.find("USER") + 5, buffer), i);
                             send(server.get_fds()[i].fd, (":server-irc 001 " + server.getUser(i).returnNickname() + " :Bienvenue sur le serveur IRC " + server.getUser(i).returnNickname() + "\n").c_str(), 17 + 32 + 2 + server.getUser(i).returnNickname().length() + server.getUser(i).returnNickname().length(), 0);
                             welcome[i] = true;
                         }
