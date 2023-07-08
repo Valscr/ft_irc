@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 17:59:14 by marvin           ###   ########.fr       */
+/*   Updated: 2023/07/08 18:52:52 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@ class Channel
         void removeOperator(int fd);
         void removeBan(int fd);
         void setInviteMode(bool state);
+
+        const std::vector<int>& getWhiteList() const;
+        const std::vector<int>& getOperators() const;
+        const std::vector<int>& getBans() const;
 };
 
 #endif

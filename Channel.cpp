@@ -55,3 +55,18 @@ void Channel::setInviteMode(bool state)
 {
 	this->_invite_mode = state;
 }
+
+const std::vector<int>& Channel::getWhiteList() const
+{
+	return (this->_white_list);
+}
+
+const std::vector<int>& Channel::getOperators() const
+{
+	return (this->_operators);
+}
+
+const std::vector<int>& Channel::getBans() const
+{
+	return (this->_bans);
+}
