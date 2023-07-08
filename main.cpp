@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 13:30:45 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 14:44:03 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
                     {
                         // Connexion fermée par le client
                         server.close_fd(i);
-                        std::cout << server.getUser(i).returnNickname() << " déconnecté" << std::endl;
+                        std::cout << server.getUser(i).returnNickname() << " disconnect" << std::endl;
                         server.deleteUser(i);
                     } 
                     else if (password[i] == false)
@@ -83,14 +83,14 @@ int main(int argc, char **argv)
                         if (server.get_password() == find_next_word(buffer.find("PASS") + 5, buffer))
                             password[i] = true;
                         else
-                            send(server.get_fds()[i].fd, ":server-irc 464 client :Mot de passe requis\n", 45, 0);
+                            send(server.get_fds()[i].fd, msg_464().c_str(), msg_464().length(), 0);
                     }
                     if (buffer.find("NICK") != std::string::npos)
                     {
                         if (password[i] == true)
                         {
                             server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), find_next_word(buffer.find("USER") + 5, buffer), i);
-                            send(server.get_fds()[i].fd, (":server-irc 001 " + server.getUser(i).returnNickname() + " :Bienvenue sur le serveur IRC " + server.getUser(i).returnNickname() + "\n").c_str(), 17 + 32 + 2 + server.getUser(i).returnNickname().length() + server.getUser(i).returnNickname().length(), 0);
+                            send(server.get_fds()[i].fd, msg_001(server.getUser(i).returnNickname()).c_str(), msg_001(server.getUser(i).returnNickname()).length(), 0);
                             welcome[i] = true;
                         }
                     }

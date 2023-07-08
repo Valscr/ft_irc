@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 13:25:49 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 14:43:48 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,7 @@ class Server;
 std::string find_next_word(int i, std::string str);
 std::string parse_buffer(std::string buffer, Server &server);
 void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds);
+std::string msg_001(std::string user);
+std::string msg_464();
 
 #endif
