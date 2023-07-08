@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 02:13:04 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 11:53:04 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,7 @@ void Server::add_bool_pass()
 
 void Server::password_true(int index)
 {
-    if (index >= 0 && static_cast<std::vector<bool>::size_type>(index) < this->password_bool.size())
-    {
-        this->password_bool[index] = true;
-    }
+    this->password_bool[index] = true;
 }
 
 void Server::delete_password_bool(int index)
@@ -70,10 +67,7 @@ void Server::add_bool_welcome()
 
 void Server::welcome_true(int index)
 {
-    if (index >= 0 && static_cast<std::vector<bool>::size_type>(index) < this->welcome.size())
-    {
-        this->welcome[index] = true;
-    }
+    this->welcome[index] = true;
 }
 
 void Server::delete_welcome_bool(int index)
@@ -141,24 +135,37 @@ void Server::createUser(std::string nickname, std::string username, int i)
                     f++;
                 }
             }
-        }
-            
+        }     
     }
     User newUser(nickname, username, i);
-    this->users.push_back(newUser); 
+    this->users.push_back(newUser);
 }
 
-std::vector<User> &Server::getUser()
+User& Server::getUser(int i)
 {
-    return this->users;
-}
-
-void Server::deleteUser(int index)
-{
-    if (index >= 0 && static_cast<std::vector<bool>::size_type>(index) < this->users.size())
+    for (size_t j = 0; j < this->users.size(); j++)
     {
-        this->users.erase(this->users.begin() + index);
+        if (this->users[j].returnFd() == i)
+        {
+            return this->users[j];
+        }
     }
+
+    // Gérer le cas où l'utilisateur n'est pas trouvé
+    throw std::runtime_error("Utilisateur non trouvé");
+}
+
+void Server::deleteUser(int i)
+{
+     for (size_t j = 0; j < this->users.size(); j++)
+    {
+        if (this->users[j].returnFd() == i)
+        {
+            this->users.erase(this->users.begin() + j);
+            return ;
+        }
+    }
+    throw std::runtime_error("Utilisateur non trouvé");
 }
 /*void Server::createChannel()
 {

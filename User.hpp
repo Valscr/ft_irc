@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 02:17:40 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 11:44:34 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,13 @@ class User
     private:
         std::string _nickname;
         std::string _username;
-        //int fd;
+        int fd;
     public:
         User(std::string nickname, std::string username, int i);
         ~User() {};
         std::string returnNickname();
         std::string returnUsername();
+        int returnFd();
 };
 
 #endif

@@ -6,11 +6,11 @@
 #    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/07 20:51:27 by valentin          #+#    #+#              #
-#    Updated: 2023/07/07 20:52:13 by valentin         ###   ########.fr        #
+#    Updated: 2023/07/08 02:27:21 by valentin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS			= main.cpp User.cpp Channel.cpp Server.cpp
+SRCS			= main.cpp User.cpp Channel.cpp Server.cpp irc.cpp
 OBJS			= $(SRCS:.cpp=.o)
 
 CC				= c++ -std=c++98

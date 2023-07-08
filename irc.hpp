@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/07 22:26:59 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 02:27:09 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Server;
 //class Channel;
 
 std::string find_next_word(int i, std::string str);
-
+std::string parse_buffer(std::string buffer);
+void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds);
 
 #endif

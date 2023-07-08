@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 02:17:31 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 12:05:56 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ User::User(std::string nickname, std::string username, int i)
         this->_username = ("Client" + to_string(i)).c_str();
     else
         this->_username = username;
+    this->fd = i;
 }
 
 std::string User::returnNickname()
@@ -40,4 +41,9 @@ std::string User::returnNickname()
 std::string User::returnUsername()
 {
     return (this->_username);
+}
+
+int User::returnFd()
+{
+    return (this->fd);
 }

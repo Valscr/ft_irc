@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 01:51:17 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 12:04:31 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,7 @@ class Server
         void set_fds_i_fd(int i);
         void close_fd(int i);
         void deleteUser(int index);
-        const User& getUser(int index) const;
-        std::vector<User> &getUser();
+        User& getUser(int i);
         std::vector<bool> &get_bool_pass();
         void add_bool_pass();
         void password_true(int index);
