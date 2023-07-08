@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 02:27:12 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 13:25:25 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ std::string find_next_word(int i, std::string str)
     return (str.substr(j, i - j));
 }
 
-std::string parse_buffer(std::string buffer)
+std::string parse_buffer(std::string buffer, Server &server)
 {
     if (buffer.find("PING") != std::string::npos)
-        return ("PONG server-irc\n");
+        return (("PONG " + server.get_name() + "\n").c_str());
     return ("");
 }
 

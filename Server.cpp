@@ -6,17 +6,18 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 12:18:03 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 13:24:14 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "irc.hpp"
 
-Server::Server(int port, std::string password): fds(MAX_CLIENTS + 1)
+Server::Server(int port, std::string password): fds(MAX_CLIENTS + 1), send_client(0)
 {
     this->port = port;
     this->password = password;
+    this->name = SERVER_NAME;
     this->listenSocket = (socket(AF_INET, SOCK_STREAM, 0));
     if (this->listenSocket < 0)
         throw std::runtime_error("Error: creation socket.\n");
@@ -49,6 +50,11 @@ void Server::set_fds_i_fd(int i)
     this->fds[i].events = POLLIN;
 }
 
+std::string Server::get_name()
+{
+    return (this->name);
+}
+
 std::string Server::get_password()
 {
     return (this->password);
@@ -72,6 +78,11 @@ int Server::getClientsocket()
 std::vector<pollfd> &Server::get_fds()
 {
     return (this->fds);
+}
+
+std::vector<std::string>  &Server::get_send()
+{
+    return (this->send_client);
 }
 
 void Server::createUser(std::string nickname, std::string username, int i)

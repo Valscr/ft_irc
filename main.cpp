@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 12:17:05 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 13:30:45 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ int main(int argc, char **argv)
     if (argc != 3)
         return (0);
     Server server(std::atoi(argv[1]), argv[2]);
-    std::vector<std::string> send_client(0);
     bool password[MAX_CLIENTS + 1];
     bool welcome[MAX_CLIENTS + 1];
 
@@ -97,8 +96,8 @@ int main(int argc, char **argv)
                     }
                     if (welcome[i] == true)
                     {
-                        send_client.push_back(parse_buffer(buffer));
-                        send_function(send_client, i, server.get_fds());
+                        server.get_send().push_back(parse_buffer(buffer, server));
+                        send_function(server.get_send(), i, server.get_fds());
                     }
                 }
             }
