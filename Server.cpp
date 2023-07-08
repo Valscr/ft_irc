@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 13:24:14 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 20:00:53 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,21 @@ void Server::deleteUser(int i)
     }
     throw std::runtime_error("Utilisateur non trouvé");
 }
-/*void Server::createChannel()
+void Server::createChannel(std::string name, int fd)
 {
-        Channel newChannel();
+        Channel newChannel(name, fd);
         this->channels.push_back(newChannel);
-}*/
+}
+
+Channel& Server::getChannel(std::string name)
+{
+    for (size_t j = 0; j <= this->channels.size(); j++)
+    {
+        if (this->channels[j].getName() == name)
+        {
+            return this->channels[j];
+        }
+    }
+    // Gérer le cas où l'utilisateur n'est pas trouvé
+    throw std::runtime_error("Channel non trouvé");
+}

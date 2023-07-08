@@ -6,13 +6,14 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 14:44:03 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 20:40:30 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc.hpp"
 #include "Server.hpp"
 #include "User.hpp"
+#include "Channel.hpp"
 
 int main(int argc, char **argv)
 {
@@ -63,7 +64,7 @@ int main(int argc, char **argv)
                     // Événement sur un socket client existant (données reçues)
                     std::string buffer(BUFFER_SIZE, '\0');
                     int bytesRead = recv(server.get_fds()[i].fd, &buffer[0], buffer.size(), 0);
-                    std::cout << buffer << std::endl;
+                    std::cout << "< " << buffer << std::endl;
                     if (bytesRead < 0)
                     {
                         if (errno != EWOULDBLOCK && errno != EAGAIN) {
@@ -75,7 +76,7 @@ int main(int argc, char **argv)
                     {
                         // Connexion fermée par le client
                         server.close_fd(i);
-                        std::cout << server.getUser(i).returnNickname() << " disconnect" << std::endl;
+                        std::cout << server.getUser(i).returnNickname() << " disconnected" << std::endl;
                         server.deleteUser(i);
                     } 
                     else if (password[i] == false)
@@ -83,7 +84,10 @@ int main(int argc, char **argv)
                         if (server.get_password() == find_next_word(buffer.find("PASS") + 5, buffer))
                             password[i] = true;
                         else
+                        {
                             send(server.get_fds()[i].fd, msg_464().c_str(), msg_464().length(), 0);
+                            std::cout << "> " << msg_464().c_str() << std::endl;
+                        }
                     }
                     if (buffer.find("NICK") != std::string::npos)
                     {
@@ -91,12 +95,13 @@ int main(int argc, char **argv)
                         {
                             server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), find_next_word(buffer.find("USER") + 5, buffer), i);
                             send(server.get_fds()[i].fd, msg_001(server.getUser(i).returnNickname()).c_str(), msg_001(server.getUser(i).returnNickname()).length(), 0);
+                            std::cout << "> " << msg_001(server.getUser(i).returnNickname()).c_str() << std::endl;
                             welcome[i] = true;
                         }
                     }
                     if (welcome[i] == true)
                     {
-                        server.get_send().push_back(parse_buffer(buffer, server));
+                        server.get_send().push_back(parse_buffer(buffer, server, i));
                         send_function(server.get_send(), i, server.get_fds());
                     }
                 }

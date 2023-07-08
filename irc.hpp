@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 14:43:48 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 19:33:14 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <cerrno>
 #include "Server.hpp"
 #include "User.hpp"
+#include "Channel.hpp"
 
 #define MAX_CLIENTS 10
 #define SERVER_NAME "server-irc"
@@ -39,7 +40,7 @@ class Server;
 //class Channel;
 
 std::string find_next_word(int i, std::string str);
-std::string parse_buffer(std::string buffer, Server &server);
+std::string parse_buffer(std::string buffer, Server &server, int fd);
 void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds);
 std::string msg_001(std::string user);
 std::string msg_464();

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 14:44:52 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 20:30:32 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,16 @@ std::string find_next_word(int i, std::string str)
     return (str.substr(j, i - j));
 }
 
-std::string parse_buffer(std::string buffer, Server &server)
+std::string parse_buffer(std::string buffer, Server &server, int fd)
 {
     if (buffer.find("PING") != std::string::npos)
         return (("PONG " + server.get_name() + "\n").c_str());
+    if (buffer.find("JOIN #") != std::string::npos)
+    {
+        server.createChannel(find_next_word(6, buffer), fd);
+        server.get_send().push_back((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
+        server.get_send().push_back((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
+    }
     return ("");
 }
 
@@ -33,8 +39,12 @@ void send_function(std::vector<std::string> &send_client, int i, std::vector<pol
     for (it = send_client.begin(); it != send_client.end(); ++it)
     {
         const std::string& str = *it;
-        const char* data = str.c_str(); 
-        send(fds[i].fd, data, std::strlen(data), 0);
+        if (!str.empty())
+        {
+            const char* data = str.c_str();
+            std::cout << "> " << data << std::endl;
+            send(fds[i].fd, data, std::strlen(data), 0);
+        }
     }
     send_client.clear();
 }

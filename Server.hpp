@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 13:24:01 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 20:02:18 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <cerrno>
 
 class User;
+class Channel;
 
 class Server
 {
@@ -37,7 +38,7 @@ class Server
         std::string name;
         int port;
         std::string password;
-        //std::vector<Channel> channels;
+        std::vector<Channel> channels;
         std::vector<User> users;
         struct sockaddr_in serverAddress;
         int listenSocket, clientSocket;
@@ -45,7 +46,8 @@ class Server
     public:
         Server(int port, std::string password);
         ~Server() {};
-        //void createChannel();
+        void createChannel(std::string name, int fd);
+        Channel& getChannel(std::string name);
         void createUser(std::string nickname, std::string username, int i);
         void get_listen_socket(int listensocket);
         std::vector<pollfd> &get_fds();

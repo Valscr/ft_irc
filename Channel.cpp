@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Channel.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
+/*   Updated: 2023/07/08 19:58:57 by valentin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Channel.hpp"
 
 Channel::Channel(std::string name, int fd) : _name(name)
@@ -56,17 +68,7 @@ void Channel::setInviteMode(bool state)
 	this->_invite_mode = state;
 }
 
-const std::vector<int>& Channel::getWhiteList() const
+std::string Channel::getName()
 {
-	return (this->_white_list);
-}
-
-const std::vector<int>& Channel::getOperators() const
-{
-	return (this->_operators);
-}
-
-const std::vector<int>& Channel::getBans() const
-{
-	return (this->_bans);
+    return (this->_name);
 }
