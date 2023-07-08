@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 20:30:32 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 20:48:57 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,16 @@ std::string find_next_word(int i, std::string str)
     return (str.substr(j, i - j));
 }
 
-std::string parse_buffer(std::string buffer, Server &server, int fd)
+void parse_buffer(std::string buffer, Server &server, int fd)
 {
     if (buffer.find("PING") != std::string::npos)
-        return (("PONG " + server.get_name() + "\n").c_str());
+        server.get_send().push_back(("PONG " + server.get_name() + "\r\n").c_str());
     if (buffer.find("JOIN #") != std::string::npos)
     {
         server.createChannel(find_next_word(6, buffer), fd);
         server.get_send().push_back((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
         server.get_send().push_back((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
     }
-    return ("");
 }
 
 void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds)

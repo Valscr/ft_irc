@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 20:40:30 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 20:49:23 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
                     }
                     if (welcome[i] == true)
                     {
-                        server.get_send().push_back(parse_buffer(buffer, server, i));
+                        parse_buffer(buffer, server, i);
                         send_function(server.get_send(), i, server.get_fds());
                     }
                 }
