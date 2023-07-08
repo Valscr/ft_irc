@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 14:23:00 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 14:46:37 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 21:38:10 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,4 +20,20 @@ std::string msg_001(std::string user)
 std::string msg_464()
 {
     return ((":" + std::string(SERVER_NAME) + " 464 client :Password required\n").c_str());
+}
+
+std::string msg_353(Server &server, std::string channel)
+{
+    std::string str = "@";
+    for (std::vector<int>::iterator it = server.getChannel(channel).getOperators().begin(); it != server.getChannel(channel).getOperators().end(); ++it)
+    {
+        str.append(server.getUser(*it).returnNickname());
+        str.append(" ");
+    }
+    for (std::vector<int>::iterator it = server.getChannel(channel).getWhiteList().begin(); it != server.getChannel(channel).getWhiteList().end(); ++it)
+    {
+        str.append(server.getUser(*it).returnNickname());
+        str.append(" ");
+    }
+    return (str);
 }

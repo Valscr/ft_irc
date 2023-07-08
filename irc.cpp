@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 20:48:57 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 01:29:28 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,30 +20,53 @@ std::string find_next_word(int i, std::string str)
     return (str.substr(j, i - j));
 }
 
-void parse_buffer(std::string buffer, Server &server, int fd)
+void send_whitelist(Server &server, int fd, std::string channel, std::string buffer)
 {
-    if (buffer.find("PING") != std::string::npos)
-        server.get_send().push_back(("PONG " + server.get_name() + "\r\n").c_str());
-    if (buffer.find("JOIN #") != std::string::npos)
+    for (std::vector<int>::iterator it = server.getChannel(channel).getOperators().begin(); it != server.getChannel(channel).getOperators().end(); ++it)
     {
-        server.createChannel(find_next_word(6, buffer), fd);
-        server.get_send().push_back((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
-        server.get_send().push_back((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
+        server.get_send_fd(*it).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
+    }
+    for (std::vector<int>::iterator it = server.getChannel(channel).getWhiteList().begin(); it != server.getChannel(channel).getWhiteList().end(); ++it)
+    {
+        server.get_send_fd(*it).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
     }
 }
 
-void send_function(std::vector<std::string> &send_client, int i, std::vector<pollfd> fds)
+void parse_buffer(std::string buffer, Server &server, int fd)
 {
-    std::vector<std::string>::const_iterator it;
-    for (it = send_client.begin(); it != send_client.end(); ++it)
+    if (buffer.find("PING") != std::string::npos)
+        server.get_send_fd(fd).append(("PONG " + server.get_name() + "\r\n").c_str());
+    if (buffer.find("JOIN #") != std::string::npos)
     {
-        const std::string& str = *it;
-        if (!str.empty())
+        if (server.find_channel(find_next_word(6, buffer)))
         {
-            const char* data = str.c_str();
-            std::cout << "> " << data << std::endl;
-            send(fds[i].fd, data, std::strlen(data), 0);
+            server.getChannel(find_next_word(6, buffer)).addWhiteList(fd);
+            send_whitelist(server, fd, find_next_word(6, buffer), buffer);
+            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
+            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 353 " + server.getUser(fd).returnNickname() +  " = #" + find_next_word(6, buffer) + " :" + msg_353(server, find_next_word(6, buffer)) + "\r\n").c_str());
+            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 366 " + server.getUser(fd).returnNickname() + " #" + find_next_word(6, buffer) + " :End of NAMES list\r\n").c_str());
+        }
+        else
+        {
+            server.createChannel(find_next_word(6, buffer), fd);
+            server.get_send_fd(fd).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
+            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
         }
     }
-    send_client.clear();
+}
+
+void send_function(Server &server, std::vector<pollfd> fds)
+{
+    for (std::map<int, std::string>::const_iterator it = server.get_send().begin(); it != server.get_send().end(); ++it)
+    {
+        if (!it->second.empty())
+        {
+            {
+                const char* data = it->second.c_str();
+                std::cout << "> " << data << std::endl;
+                send(fds[it->first].fd, data, std::strlen(data), 0);
+            }
+            server.erase_send(it->first);
+        }
+    }
 }

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 19:58:57 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 21:28:03 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 Channel::Channel(std::string name, int fd) : _name(name)
 {
-	this->_white_list.push_back(fd);
 	this->_operators.push_back(fd);
 	this->_invite_mode = false;
 }

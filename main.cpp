@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 20:49:23 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 00:15:47 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int main(int argc, char **argv)
                         if (password[i] == true)
                         {
                             server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), find_next_word(buffer.find("USER") + 5, buffer), i);
+                            server.get_send().insert(std::make_pair(i, ""));
                             send(server.get_fds()[i].fd, msg_001(server.getUser(i).returnNickname()).c_str(), msg_001(server.getUser(i).returnNickname()).length(), 0);
                             std::cout << "> " << msg_001(server.getUser(i).returnNickname()).c_str() << std::endl;
                             welcome[i] = true;
@@ -102,7 +103,7 @@ int main(int argc, char **argv)
                     if (welcome[i] == true)
                     {
                         parse_buffer(buffer, server, i);
-                        send_function(server.get_send(), i, server.get_fds());
+                        send_function(server, server.get_fds());
                     }
                 }
             }

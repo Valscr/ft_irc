@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 20:02:18 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 22:30:50 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "irc.hpp"
 #include <iostream>
 #include <vector>
+#include <map>
 #include <list>
 #include <cstring>
 #include <unistd.h>
@@ -42,12 +43,13 @@ class Server
         std::vector<User> users;
         struct sockaddr_in serverAddress;
         int listenSocket, clientSocket;
-        std::vector<std::string> send_client;
+        std::map<int, std::string> send_client;
     public:
         Server(int port, std::string password);
         ~Server() {};
         void createChannel(std::string name, int fd);
         Channel& getChannel(std::string name);
+        int find_channel(std::string name);
         void createUser(std::string nickname, std::string username, int i);
         void get_listen_socket(int listensocket);
         std::vector<pollfd> &get_fds();
@@ -59,7 +61,10 @@ class Server
         void close_fd(int i);
         void deleteUser(int index);
         User& getUser(int i);
-        std::vector<std::string>  &get_send();
+        std::string  &get_send_fd(int fd);
+        std::map<int, std::string> &get_send();
+        void  erase_send(int fd);
+        void  add_send(int fd, std::string str);
         std::string get_name();
 };
 

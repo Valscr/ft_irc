@@ -6,14 +6,14 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 20:00:53 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 00:39:48 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "irc.hpp"
 
-Server::Server(int port, std::string password): fds(MAX_CLIENTS + 1), send_client(0)
+Server::Server(int port, std::string password): fds(MAX_CLIENTS + 1)
 {
     this->port = port;
     this->password = password;
@@ -80,9 +80,44 @@ std::vector<pollfd> &Server::get_fds()
     return (this->fds);
 }
 
-std::vector<std::string>  &Server::get_send()
+std::string  &Server::get_send_fd(int fd)
+{
+    for (std::map<int, std::string>::iterator it = this->send_client.begin(); it != this->send_client.end(); ++it)
+    {
+        if (it->first == fd)
+        {
+            return (it->second);
+        }
+    }
+     throw std::runtime_error("Socket non trouvé");
+}
+
+std::map<int, std::string> &Server::get_send()
 {
     return (this->send_client);
+}
+
+void  Server::erase_send(int fd)
+{
+    for (std::map<int, std::string>::iterator it = this->send_client.begin(); it != this->send_client.end(); ++it)
+    {
+        if (it->first == fd)
+        {
+            it->second.clear();
+        }
+    }
+}
+
+void  Server::add_send(int fd, std::string str)
+{
+    for (std::map<int, std::string>::iterator it = this->send_client.begin(); it != this->send_client.end(); ++it)
+    {
+        if (it->first == fd)
+        {
+            it->second = str;
+        }
+    }
+     throw std::runtime_error("Socket non trouvé");
 }
 
 void Server::createUser(std::string nickname, std::string username, int i)
@@ -115,13 +150,35 @@ User& Server::getUser(int i)
             return this->users[j];
         }
     }
-    // Gérer le cas où l'utilisateur n'est pas trouvé
-    throw std::runtime_error("Utilisateur non trouvé");
+    throw std::runtime_error("Utilisateur non trouvéo");
 }
 
 void Server::deleteUser(int i)
 {
-     for (size_t j = 0; j <= this->users.size(); j++)
+    this->erase_send(i);
+    for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+        Channel& channel = *it;
+        std::vector<int> operators = channel.getOperators();
+        for (std::vector<int>::iterator opIt = operators.begin(); opIt != operators.end(); ++opIt)
+        {
+            if (i == *opIt)
+            {
+                operators.erase(opIt);
+                break;
+            }
+        }
+        std::vector<int> whitelist = channel.getWhiteList();
+        for (std::vector<int>::iterator wtIt = whitelist.begin(); wtIt != whitelist.end(); ++wtIt)
+        {
+            if (i == *wtIt)
+            {
+                whitelist.erase(wtIt);
+                break;
+            }
+        }
+    }
+    for (size_t j = 0; j <= this->users.size(); j++)
     {
         if (this->users[j].returnFd() == i)
         {
@@ -137,6 +194,20 @@ void Server::createChannel(std::string name, int fd)
         this->channels.push_back(newChannel);
 }
 
+int Server::find_channel(std::string name)
+{
+    if (this->channels.empty())
+        return (0);
+    for (size_t j = 0; j <= this->channels.size(); j++)
+    {
+        if (this->channels[j].getName() == name)
+        {
+            return (1);
+        }
+    }
+    return (0);
+}
+
 Channel& Server::getChannel(std::string name)
 {
     for (size_t j = 0; j <= this->channels.size(); j++)
@@ -146,6 +217,5 @@ Channel& Server::getChannel(std::string name)
             return this->channels[j];
         }
     }
-    // Gérer le cas où l'utilisateur n'est pas trouvé
     throw std::runtime_error("Channel non trouvé");
 }

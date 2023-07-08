@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 19:58:53 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 21:39:29 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ class Channel
         void setInviteMode(bool state);
         std::string getName();
 
-        const std::vector<int>& getWhiteList() const;
-        const std::vector<int>& getOperators() const;
-        const std::vector<int>& getBans() const;
+        std::vector<int>& getWhiteList() {return (this->_white_list);};
+        std::vector<int>& getOperators() {return (this->_operators);};
+        std::vector<int>& getBans() {return (this->_bans);};
 };
 
 #endif
