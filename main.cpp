@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/07 23:06:04 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/08 02:23:10 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,11 @@ int main(int argc, char **argv)
     if (argc != 3)
         return (0);
     Server server(std::atoi(argv[1]), argv[2]);
-    int nickname[MAX_CLIENTS + 1];
-    int password[MAX_CLIENTS + 1];
-    int welcome[MAX_CLIENTS + 1];
     std::vector<std::string> send_client(0);
-    User user;
 
     while (true)
     {
-        int result = poll(server.get_fds().data(), server.get_fds().size(), -1); // Attendre indéfiniment
-        if (result < 0)
+        if (poll(server.get_fds().data(), server.get_fds().size(), -1) < 0)
         {
             perror("Erreur lors de l'appel à poll");
             exit(1);
@@ -81,13 +76,14 @@ int main(int argc, char **argv)
                             exit(1);
                         }
                         server.set_fds_i_fd(i);
+                        server.add_bool_pass();
+                        server.add_bool_welcome();
                     }
                 }
                 else 
                 {
                     // Événement sur un socket client existant (données reçues)
                     std::string buffer(BUFFER_SIZE, '\0');
-
                     int bytesRead = recv(server.get_fds()[i].fd, &buffer[0], buffer.size(), 0);
                     std::cout << buffer << std::endl;
                     if (bytesRead < 0)
@@ -101,41 +97,29 @@ int main(int argc, char **argv)
                     {
                         // Connexion fermée par le client
                         server.close_fd(i);
-                        std::cout << user.returnNickname(i) << " déconnecté" << std::endl;
-                        user.setUsername(("Client " + std::to_string(i)).c_str(), i);
-                        user.setNickname(("Client " + std::to_string(i)).c_str(), i);
+                        std::cout << server.getUser()[i].returnNickname() << " déconnecté" << std::endl;
+                        server.deleteUser(i);
+                        server.delete_password_bool(i);
+                        server.delete_welcome_bool(i);
                     } 
-                    else if (password[i] == 0)
+                    else if (server.get_bool_pass()[i] == false)
                     {
                         if (server.get_password() == find_next_word(buffer.find("PASS") + 5, buffer))
-                        {
-                            password[i] = 1;
-                        }
+                            server.password_true(i);
                         else
-                        {
                             send(server.get_fds()[i].fd, ":server-irc 464 client :Mot de passe requis\n", 45, 0);
-                        }
                     }
-                    if (welcome[i] == 0 && buffer.find("NICK") != std::string::npos)
+                    if (buffer.find("NICK") != std::string::npos)
                     {
-                        nickname[i] = user.setNickname(find_next_word(buffer.find("NICK") + 5, buffer), i);
-                        user.setUsername(find_next_word(buffer.find("USER") + 5, buffer), i);
-                        std::string nick = find_next_word(buffer.find("NICK") + 5, buffer);
-                        while (nickname[i] == 1)
+                        server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), find_next_word(buffer.find("USER") + 5, buffer), i);
+                        
+                        if (server.get_bool_pass()[i] == true)
                         {
-                            nickname[i] = user.setNickname(user.returnNickname(i), i);
-                            send_client.push_back((":server-irc 433 * " + nick + " :Nickname is already in use\n").c_str());
-                            nick = (nick + "_").c_str();
+                            send(server.get_fds()[i].fd, (":server-irc 001 " + server.getUser()[i].returnNickname() + " :Bienvenue sur le serveur IRC " + server.getUser()[i].returnNickname() + "\n").c_str(), 17 + 32 + 2 + (server.getUser()[i].returnNickname().length() * 2), 0);
+                            server.welcome_true(i);
                         }
-                        send_function(send_client, i, server.get_fds());
-                        if (password[i] == 1)
-                        {
-                            send(server.get_fds()[i].fd, (":server-irc 001 " + user.returnNickname(i) + " :Bienvenue sur le serveur IRC " + user.returnNickname(i) + "\n").c_str(), 17 + 32 + 2 + user.returnNickname(i).length() + user.returnNickname(i).length(), 0);
-                            welcome[i] = 1;
-                        }
-                        std::cout << "USER = " << user.returnUsername(i) << std::endl;
                     }
-                    if (welcome[i] == 1)
+                    if (server.get_bool_welcome()[i] == true)
                     {
                         send_client.push_back(parse_buffer(buffer));
                         send_function(send_client, i, server.get_fds());
