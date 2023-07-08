@@ -11,44 +11,44 @@ Channel::~Channel() {}
 
 void Channel::addWhiteList(int fd)
 {
-	std::vector<int>::iterator it = std::find(_white_list.begin(), _white_list.end(), fd);
-	if (it == _white_list.end())
+	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
+	if (it == this->_white_list.end())
 		this->_white_list.push_back(fd);
 }
 
 void Channel::addOperator(int fd)
 {
-	std::vector<int>::iterator it = std::find(_operators.begin(), _operators.end(), fd);
-	if (it == _operators.end())
+	std::vector<int>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), fd);
+	if (it == this->_operators.end())
 		this->_operators.push_back(fd);
 }
 
 void Channel::addBan(int fd)
 {
-	std::vector<int>::iterator it = std::find(_bans.begin(), _bans.end(), fd);
-	if (it == _bans.end())
+	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
+	if (it == this->_bans.end())
 		this->_bans.push_back(fd);
 }
 
 void Channel::removeWhiteList(int fd)
 {
-	std::vector<int>::iterator it = std::find(_white_list.begin(), _white_list.end(), fd);
-	if (it != _white_list.end())
-		_white_list.erase(it);
+	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
+	if (it != this->_white_list.end())
+		this->_white_list.erase(it);
 }
 
 void Channel::removeOperator(int fd)
 {
-	std::vector<int>::iterator it = std::find(_operators.begin(), _operators.end(), fd);
-	if (it != _operators.end())
-		_operators.erase(it);
+	std::vector<int>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), fd);
+	if (it != this->_operators.end())
+		this->_operators.erase(it);
 }
 
 void Channel::removeBan(int fd)
 {
-	std::vector<int>::iterator it = std::find(_bans.begin(), _bans.end(), fd);
-	if (it != _bans.end())
-		_bans.erase(it);
+	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
+	if (it != this->_bans.end())
+		this->_bans.erase(it);
 }
 
 void Channel::setInviteMode(bool state)
