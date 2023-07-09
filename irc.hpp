@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 20:01:01 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 22:53:50 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@
 #define MAX_CLIENTS 10
 #define SERVER_NAME "server-irc"
 #define BUFFER_SIZE 1024
+#define ANSI_RESET "\033[0m"
+#define ANSI_GREEN "\033[32m"
+#define ANSI_BLUE "\033[94m"
+#define ANSI_YELLOW "\033[33m"
 
 
 class User;

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 17:57:27 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 22:53:36 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,16 @@ void send_whitelist(Server &server, int fd, std::string channel, std::string buf
     for (std::vector<int>::iterator it = server.getChannel(channel).getOperators().begin(); it != server.getChannel(channel).getOperators().end(); ++it)
     {
         if (fd != *it)
+        {
             server.get_send_fd(*it).append(buffer);
+        }
     }
     for (std::vector<int>::iterator it = server.getChannel(channel).getWhiteList().begin(); it != server.getChannel(channel).getWhiteList().end(); ++it)
     {
         if (fd != *it)
+        {
             server.get_send_fd(*it).append(buffer);
+        }
     }
 }
 
@@ -52,7 +56,7 @@ void send_function(Server &server, std::vector<pollfd> fds)
         {
             {
                 const char* data = it->second.c_str();
-                std::cout << "> " << data << std::endl;
+                std::cout << ANSI_GREEN << "> " << data << ANSI_RESET << std::endl;
                 send(fds[it->first].fd, data, std::strlen(data), 0);
             }
             server.erase_send(it->first);

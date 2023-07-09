@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 13:10:08 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 21:55:31 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Server
         void createChannel(std::string name, int fd);
         Channel& getChannel(std::string name);
         int find_channel(std::string name);
-        void createUser(std::string nickname, std::string username, int i);
+        void createUser(std::string nickname, int i);
         void get_listen_socket(int listensocket);
         std::vector<pollfd> &get_fds();
         int getListensocket();
@@ -68,6 +68,7 @@ class Server
         std::string get_name();
         User& getUserwithNickname(std::string name);
         int UserExist(std::string name);
+        int UserExist_fd(int fd);
 };
 
 #endif

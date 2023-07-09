@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 17:55:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 20:17:43 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 22:55:34 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ void privmsg_funct(std::string buffer, Server &server, int fd)
         if (server.UserExist(find_next_word(8, buffer)))
             server.get_send_fd(server.getUserwithNickname(find_next_word(8, buffer)).returnFd()).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
         else
-            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 301 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :This user has disconnected.\r\n").c_str());
+        {
+            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 301 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :This user is disconnected.\r\n").c_str());
+        }
     }
 }

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 20:18:02 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 22:02:02 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,12 @@ bool run;
 
 void handleSignal(int signal)
 {
-    run = false;
+    (void)signal;
+    if (run == true)
+    {
+        run = false;
+        std::cout << std::endl <<  ANSI_YELLOW << "server closing." << ANSI_RESET << std::endl;
+    }
 }
 
 void server_exec(Server &server)
@@ -35,7 +40,7 @@ void server_exec(Server &server)
     while (run == true)
     {
         if (poll(server.get_fds().data(), server.get_fds().size(), -1) < 0)
-            throw std::runtime_error("pool call");
+            handleSignal(1);
         // Vérifier les événements sur les descripteurs de fichiers surveillés
         for (size_t i = 0; i < server.get_fds().size(); i++)
         {
@@ -60,7 +65,7 @@ void server_exec(Server &server)
                     // Événement sur un socket client existant (données reçues)
                     std::string buffer(BUFFER_SIZE, '\0');
                     int bytesRead = recv(server.get_fds()[i].fd, &buffer[0], buffer.size(), 0);
-                    std::cout << "< " << buffer << std::endl;
+                    std::cout << ANSI_BLUE << "< " << buffer << ANSI_RESET << std::endl;
                     if (bytesRead < 0)
                     {
                         if (errno != EWOULDBLOCK && errno != EAGAIN)
@@ -87,13 +92,19 @@ void server_exec(Server &server)
                     {
                         if (password[i] == true)
                         {
-                            server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), find_next_word(buffer.find("USER") + 5, buffer), i);
+                            server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), i);
                             server.get_send().insert(std::make_pair(i, ""));
                             send(server.get_fds()[i].fd, msg_001(server.getUser(i).returnNickname()).c_str(), msg_001(server.getUser(i).returnNickname()).length(), 0);
-                            std::cout << "> " << msg_001(server.getUser(i).returnNickname()).c_str() << std::endl;
+                            std::cout << ANSI_GREEN << "> " << msg_001(server.getUser(i).returnNickname()).c_str() << ANSI_RESET << std::endl;
                             welcome[i] = true;
                         }
                     }
+                    if (buffer.find("USER") != std::string::npos)
+                    {
+                        if (server.UserExist_fd(i))
+                            server.getUser(i).setUsername(find_next_word(buffer.find("USER") + 5, buffer));
+                    }
+                   
                     if (welcome[i] == true)
                     {
                         parse_buffer(buffer, server, i);
@@ -104,7 +115,5 @@ void server_exec(Server &server)
         }
     }
     for (size_t i = 0; i < server.get_fds().size(); i++)
-    {
         close(server.get_fds()[i].fd);
-    }
 }

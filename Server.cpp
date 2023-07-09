@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 14:04:56 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 22:53:44 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void  Server::add_send(int fd, std::string str)
      throw std::runtime_error("Socket non trouvé");
 }
 
-void Server::createUser(std::string nickname, std::string username, int i)
+void Server::createUser(std::string nickname, int i)
 {
     if (!nickname.empty())
     {
@@ -137,7 +137,7 @@ void Server::createUser(std::string nickname, std::string username, int i)
             }
         }     
     }
-    User newUser(nickname, username, i);
+    User newUser(nickname, i);
     this->users.push_back(newUser);
 }
 
@@ -158,6 +158,19 @@ int Server::UserExist(std::string name)
     for (size_t j = 0; j <= this->users.size(); j++)
     {
         if (this->users[j].returnNickname() == name)
+        {
+            
+            return (1);
+        }
+    }
+    return (0);
+}
+
+int Server::UserExist_fd(int fd)
+{
+    for (size_t j = 0; j <= this->users.size(); j++)
+    {
+        if (this->users[j].returnFd() == fd)
         {
             
             return (1);

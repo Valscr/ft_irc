@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 12:12:38 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 21:54:23 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,13 @@ std::string to_string(int value)
     return oss.str();
 }
 
-User::User(std::string nickname, std::string username, int i)
+User::User(std::string nickname, int i)
 {
     if (nickname.empty())
         this->_nickname = ("Client" + to_string(i)).c_str();
     else
         this->_nickname = nickname;
-    if (username.empty())
-        this->_username = ("Client" + to_string(i)).c_str();
-    else
-        this->_username = username;
+    this->_username = ("Client" + to_string(i)).c_str();
     this->fd = i;
 }
 
@@ -46,4 +43,9 @@ std::string User::returnUsername()
 int User::returnFd()
 {
     return (this->fd);
+}
+
+void User::setUsername(std::string newUsername)
+{
+    this->_username = newUsername;
 }
