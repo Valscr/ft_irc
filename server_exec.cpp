@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 22:02:02 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 23:17:34 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,11 @@ void server_exec(Server &server)
                     // Événement sur un socket client existant (données reçues)
                     std::string buffer(BUFFER_SIZE, '\0');
                     int bytesRead = recv(server.get_fds()[i].fd, &buffer[0], buffer.size(), 0);
-                    std::cout << ANSI_BLUE << "< " << buffer << ANSI_RESET << std::endl;
+                    if (run == true)
+                        std::cout << ANSI_BLUE << "< " << buffer << ANSI_RESET << std::endl;
                     if (bytesRead < 0)
                     {
-                        if (errno != EWOULDBLOCK && errno != EAGAIN)
+                        if (errno != EWOULDBLOCK && run == true && errno != EAGAIN)
                             throw std::runtime_error("reading buffer");
                     }
                     else if (bytesRead == 0)
