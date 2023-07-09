@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 22:30:50 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 13:10:08 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ class Server
         void  erase_send(int fd);
         void  add_send(int fd, std::string str);
         std::string get_name();
+        User& getUserwithNickname(std::string name);
+        int UserExist(std::string name);
 };
 
 #endif

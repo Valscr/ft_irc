@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 12:06:08 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 14:04:56 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,31 @@ User& Server::getUser(int i)
     throw std::runtime_error("Utilisateur non trouvé");
 }
 
+int Server::UserExist(std::string name)
+{
+    for (size_t j = 0; j <= this->users.size(); j++)
+    {
+        if (this->users[j].returnNickname() == name)
+        {
+            
+            return (1);
+        }
+    }
+    return (0);
+}
+
+User& Server::getUserwithNickname(std::string name)
+{
+    for (size_t j = 0; j <= this->users.size(); j++)
+    {
+        if (this->users[j].returnNickname() == name)
+        {
+            return this->users[j];
+        }
+    }
+    throw std::runtime_error("Utilisateur non trouvé");
+}
+
 void Server::deleteUser(int i)
 {
     this->erase_send(i);
@@ -162,12 +187,12 @@ void Server::deleteUser(int i)
         channel.removeOperator(i);
         channel.removeWhiteList(i);
     }
-    for (size_t j = 0; j <= this->users.size(); j++)
+    for (std::vector<User>::iterator it = this->users.begin(); it != this->users.end(); ++it)
     {
-        if (this->users[j].returnFd() == i)
+        if (it->returnFd() == i)
         {
-            this->users.erase(this->users.begin() + j);
-            return ;
+            this->users.erase(it);
+            return;
         }
     }
     throw std::runtime_error("Utilisateur non trouvé");

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 12:16:55 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 14:07:20 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,18 @@ void parse_buffer(std::string buffer, Server &server, int fd)
                 send_whitelist(server, fd, find_next_word(9, buffer), (":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
             }
             else
-                server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 401 " + server.getUser(fd).returnNickname() + find_next_word(8, buffer) + " :No such channel\r\n").c_str());
+                server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 401 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :No such channel\r\n").c_str());
 
+        }
+        else
+        {
+            if (server.UserExist(find_next_word(8, buffer)))
+            {
+                server.get_send_fd(server.getUserwithNickname(find_next_word(8, buffer)).returnFd()).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
+                server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 301 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :Message sent successfully\r\n").c_str());
+            }
+            else
+                server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 401 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :No such User\r\n").c_str());
         }
     }
 }
