@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 00:21:53 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 00:48:41 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ int Channel::find_channels(int fd)
 {
 	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
 	if (it != this->_white_list.end())
+		return (1);
+	std::vector<int>::iterator ito = std::find(this->_operators.begin(), this->_operators.end(), fd);
+	if (ito != this->_operators.end())
 		return (1);
 	return (0);
 }

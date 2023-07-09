@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 00:08:49 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 00:31:42 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void server_exec(Server &server)
                     {
                         // Connexion fermée par le client
                         server.close_fd(i);
-                        std::cout << server.getUser(i).returnNickname() << " disconnected" << std::endl;
+                        std::cout << server.getUser(i).returnNickname() << " disconnected\n" << std::endl;
                         server.deleteUser(i);
                     } 
                     else if (password[i] == false)
