@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 22:53:36 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 00:08:44 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void send_function(Server &server, std::vector<pollfd> fds)
         {
             {
                 const char* data = it->second.c_str();
-                std::cout << ANSI_GREEN << "> " << data << ANSI_RESET << std::endl;
+                std::cout << ANSI_GREEN << MAX_CLIENTS - it->first + 1 << " > " << data << ANSI_RESET << std::endl;
                 send(fds[it->first].fd, data, std::strlen(data), 0);
             }
             server.erase_send(it->first);

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 23:17:34 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 00:08:49 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void server_exec(Server &server)
                     std::string buffer(BUFFER_SIZE, '\0');
                     int bytesRead = recv(server.get_fds()[i].fd, &buffer[0], buffer.size(), 0);
                     if (run == true)
-                        std::cout << ANSI_BLUE << "< " << buffer << ANSI_RESET << std::endl;
+                        std::cout << ANSI_BLUE << MAX_CLIENTS + 1 - i << " < " << buffer << ANSI_RESET << std::endl;
                     if (bytesRead < 0)
                     {
                         if (errno != EWOULDBLOCK && run == true && errno != EAGAIN)
@@ -96,7 +96,7 @@ void server_exec(Server &server)
                             server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), i);
                             server.get_send().insert(std::make_pair(i, ""));
                             send(server.get_fds()[i].fd, msg_001(server.getUser(i).returnNickname()).c_str(), msg_001(server.getUser(i).returnNickname()).length(), 0);
-                            std::cout << ANSI_GREEN << "> " << msg_001(server.getUser(i).returnNickname()).c_str() << ANSI_RESET << std::endl;
+                            std::cout << ANSI_GREEN << MAX_CLIENTS + 1 - i << " > " << msg_001(server.getUser(i).returnNickname()).c_str() << ANSI_RESET << std::endl;
                             welcome[i] = true;
                         }
                     }
