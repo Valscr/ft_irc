@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 11:25:34 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 01:08:30 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 {
     if (argc != 3)
     {
-        std::cout << "Usage: ./server <port> <password" << std::endl;
+        std::cout << "Usage: ./server <port> <password>" << std::endl;
         return (0);
     }
     try {
