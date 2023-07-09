@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 11:25:22 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 17:56:39 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,5 +47,9 @@ std::string msg_001(std::string user);
 std::string msg_464();
 std::string msg_353(Server &server, std::string channel);
 int is_port(char *str);
+void join_funct(std::string buffer, Server &server, int fd);
+void privmsg_funct(std::string buffer, Server &server, int fd);
+void send_whitelist(Server &server, int fd, std::string channel, std::string buffer);
+
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 14:07:20 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 17:57:27 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,46 +39,9 @@ void parse_buffer(std::string buffer, Server &server, int fd)
     if (buffer.find("PING") != std::string::npos)
         server.get_send_fd(fd).append(("PONG " + server.get_name() + "\r\n").c_str());
     if (buffer.find("JOIN #") != std::string::npos)
-    {
-        if (server.find_channel(find_next_word(6, buffer)))
-        {
-            server.getChannel(find_next_word(6, buffer)).addWhiteList(fd);
-            send_whitelist(server, fd, find_next_word(6, buffer), (":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
-            server.get_send_fd(fd).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
-            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
-            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 353 " + server.getUser(fd).returnNickname() +  " = #" + find_next_word(6, buffer) + " :" + msg_353(server, find_next_word(6, buffer)) + "\r\n").c_str());
-            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 366 " + server.getUser(fd).returnNickname() + " #" + find_next_word(6, buffer) + " :End of NAMES list\r\n").c_str());
-        }
-        else
-        {
-            server.createChannel(find_next_word(6, buffer), fd);
-            server.get_send_fd(fd).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
-            server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
-        }
-    }
+        join_funct(buffer, server, fd);
     if (buffer.find("PRIVMSG") != std::string::npos)
-    {
-        if (buffer.find("PRIVMSG #") != std::string::npos)
-        {
-            if (server.find_channel(find_next_word(9, buffer)))
-            {
-                send_whitelist(server, fd, find_next_word(9, buffer), (":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
-            }
-            else
-                server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 401 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :No such channel\r\n").c_str());
-
-        }
-        else
-        {
-            if (server.UserExist(find_next_word(8, buffer)))
-            {
-                server.get_send_fd(server.getUserwithNickname(find_next_word(8, buffer)).returnFd()).append((":" + server.getUser(fd).returnNickname() + " " + buffer).c_str());
-                server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 301 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :Message sent successfully\r\n").c_str());
-            }
-            else
-                server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 401 " + server.getUser(fd).returnNickname() + " " + find_next_word(8, buffer) + " :No such User\r\n").c_str());
-        }
-    }
+        privmsg_funct(buffer, server, fd);
 }
 
 void send_function(Server &server, std::vector<pollfd> fds)
