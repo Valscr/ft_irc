@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 23:42:44 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 11:25:22 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,15 @@
 
 class User;
 class Server;
-//class Channel;
+class Channel;
 
+void server_exec(Server &server);
 std::string find_next_word(int i, std::string str);
 void parse_buffer(std::string buffer, Server &server, int fd);
 void send_function(Server &server, std::vector<pollfd> fds);
 std::string msg_001(std::string user);
 std::string msg_464();
 std::string msg_353(Server &server, std::string channel);
+int is_port(char *str);
 
 #endif
