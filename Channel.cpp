@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 01:42:17 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 00:21:53 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,14 @@ void Channel::addBan(int fd)
 	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
 	if (it == this->_bans.end())
 		this->_bans.push_back(fd);
+}
+
+int Channel::find_channels(int fd)
+{
+	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
+	if (it != this->_white_list.end())
+		return (1);
+	return (0);
 }
 
 void Channel::removeWhiteList(int fd)

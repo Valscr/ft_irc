@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 14:35:24 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 00:23:40 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Channel
         void removeBan(int fd);
         void setInviteMode(bool state);
         std::string getName();
+        int find_channels(int fd);
 
         std::vector<int>& getWhiteList() {return (this->_white_list);};
         std::vector<int>& getOperators() {return (this->_operators);};
