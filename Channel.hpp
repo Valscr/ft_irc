@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/08 21:39:29 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 14:35:24 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ class Channel
         bool                _invite_mode;
     public:
         Channel(std::string name, int fd);
-        // la copie et la surcharge de '=' ne me semblent pas utiles 
         ~Channel();
         void addWhiteList(int fd);
         void addOperator(int fd);
