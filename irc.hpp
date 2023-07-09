@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 17:56:39 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 20:01:01 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include "Server.hpp"
 #include "User.hpp"
 #include "Channel.hpp"
+#include <signal.h>
 
 #define MAX_CLIENTS 10
 #define SERVER_NAME "server-irc"

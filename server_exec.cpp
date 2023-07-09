@@ -6,24 +6,33 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 12:09:46 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 20:18:02 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc.hpp"
+
+bool run;
+
+void handleSignal(int signal)
+{
+    run = false;
+}
 
 void server_exec(Server &server)
 {
     bool password[MAX_CLIENTS + 1];
     bool welcome[MAX_CLIENTS + 1];
 
+    run = true;
     for (int j = 0; j <= MAX_CLIENTS; j++)
     {
         password[j] = false;
         welcome[j] = false;
     }
     
-    while (true)
+    signal(SIGINT, handleSignal);
+    while (run == true)
     {
         if (poll(server.get_fds().data(), server.get_fds().size(), -1) < 0)
             throw std::runtime_error("pool call");
@@ -93,5 +102,9 @@ void server_exec(Server &server)
                 }
             }
         }
+    }
+    for (size_t i = 0; i < server.get_fds().size(); i++)
+    {
+        close(server.get_fds()[i].fd);
     }
 }
