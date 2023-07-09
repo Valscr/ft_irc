@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 01:29:28 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 01:46:17 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,11 @@ void parse_buffer(std::string buffer, Server &server, int fd)
         {
             server.getChannel(find_next_word(6, buffer)).addWhiteList(fd);
             send_whitelist(server, fd, find_next_word(6, buffer), buffer);
+            std::cout << "test" << std::endl;
             server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
             server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 353 " + server.getUser(fd).returnNickname() +  " = #" + find_next_word(6, buffer) + " :" + msg_353(server, find_next_word(6, buffer)) + "\r\n").c_str());
             server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 366 " + server.getUser(fd).returnNickname() + " #" + find_next_word(6, buffer) + " :End of NAMES list\r\n").c_str());
+            std::cout << "tost" << std::endl;
         }
         else
         {

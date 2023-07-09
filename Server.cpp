@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 00:39:48 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 02:01:12 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,27 +156,11 @@ User& Server::getUser(int i)
 void Server::deleteUser(int i)
 {
     this->erase_send(i);
-    for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
+    for (std::vector<Channel>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
     {
         Channel& channel = *it;
-        std::vector<int> operators = channel.getOperators();
-        for (std::vector<int>::iterator opIt = operators.begin(); opIt != operators.end(); ++opIt)
-        {
-            if (i == *opIt)
-            {
-                operators.erase(opIt);
-                break;
-            }
-        }
-        std::vector<int> whitelist = channel.getWhiteList();
-        for (std::vector<int>::iterator wtIt = whitelist.begin(); wtIt != whitelist.end(); ++wtIt)
-        {
-            if (i == *wtIt)
-            {
-                whitelist.erase(wtIt);
-                break;
-            }
-        }
+        channel.removeOperator(i);
+        channel.removeWhiteList(i);
     }
     for (size_t j = 0; j <= this->users.size(); j++)
     {
