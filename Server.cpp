@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 22:53:44 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 23:34:55 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,7 @@ void Server::deleteUser(int i)
     for (std::vector<Channel>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
     {
         Channel& channel = *it;
+        send_whitelist(*this, i, channel.getName(), (":" + std::string(SERVER_NAME) + " PRIVMSG #" + channel.getName() + " :" + this->getUser(i).returnNickname() + " is away\r\n").c_str());
         channel.removeOperator(i);
         channel.removeWhiteList(i);
     }
