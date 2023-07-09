@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 02:01:12 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 12:06:08 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,17 @@ Server::Server(int port, std::string password): fds(MAX_CLIENTS + 1)
     this->name = SERVER_NAME;
     this->listenSocket = (socket(AF_INET, SOCK_STREAM, 0));
     if (this->listenSocket < 0)
-        throw std::runtime_error("Error: creation socket.\n");
+        throw std::runtime_error("creation socket.\n");
     memset(&this->serverAddress, 0, sizeof(this->serverAddress));
     this->serverAddress.sin_family = AF_INET;
     this->serverAddress.sin_addr.s_addr = INADDR_ANY;
     this->serverAddress.sin_port = htons(port);
     if (bind(this->listenSocket, reinterpret_cast<struct sockaddr*>(&this->serverAddress), sizeof(this->serverAddress)) < 0)
-        throw std::runtime_error("Error: creation socket.\n");
+        throw std::runtime_error("creation socket.\n");
     if (listen(this->listenSocket, MAX_CLIENTS) < 0)
-        throw std::runtime_error("Error: creation socket.\n");
+        throw std::runtime_error("creation socket.\n");
     if (fcntl(this->listenSocket, F_SETFL, O_NONBLOCK) < 0)
-        throw std::runtime_error("Error: creation socket.\n");
+        throw std::runtime_error("creation socket.\n");
     for (int j = 0; j <= MAX_CLIENTS; j++)
     {
         this->fds[j].fd = this->listenSocket;
@@ -150,7 +150,7 @@ User& Server::getUser(int i)
             return this->users[j];
         }
     }
-    throw std::runtime_error("Utilisateur non trouvéo");
+    throw std::runtime_error("Utilisateur non trouvé");
 }
 
 void Server::deleteUser(int i)

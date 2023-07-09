@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_server.cpp                                    :+:      :+:    :+:   */
+/*   server_exec.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 11:07:04 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/09 12:09:46 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,7 @@ void server_exec(Server &server)
     while (true)
     {
         if (poll(server.get_fds().data(), server.get_fds().size(), -1) < 0)
-        {
-            perror("Erreur lors de l'appel à poll");
-            exit(1);
-        }
+            throw std::runtime_error("pool call");
         // Vérifier les événements sur les descripteurs de fichiers surveillés
         for (size_t i = 0; i < server.get_fds().size(); i++)
         {
@@ -40,16 +37,12 @@ void server_exec(Server &server)
                     // Événement sur le socket d'écoute (nouvelle connexion entrante)
                     server.set_Clientsocket(accept(server.getListensocket(), NULL, NULL)); 
                     if (server.getClientsocket() < 0) {
-                        if (errno != EWOULDBLOCK && errno != EAGAIN) {
-                            perror("Erreur lors de l'acceptation de la connexion");
-                            exit(1);
-                        }
+                        if (errno != EWOULDBLOCK && errno != EAGAIN)
+                            throw std::runtime_error("not accepted connexion");
                     } else {
                         // Mettre le socket client en mode non-bloquant
-                        if (fcntl(server.getClientsocket(), F_SETFL, O_NONBLOCK) < 0) {
-                            perror("Erreur lors de la configuration du socket client en mode non-bloquant");
-                            exit(1);
-                        }
+                        if (fcntl(server.getClientsocket(), F_SETFL, O_NONBLOCK) < 0)
+                            throw std::runtime_error("configuration socket in non-blocking mode");
                         server.set_fds_i_fd(i);
                     }
                 }
@@ -61,10 +54,8 @@ void server_exec(Server &server)
                     std::cout << "< " << buffer << std::endl;
                     if (bytesRead < 0)
                     {
-                        if (errno != EWOULDBLOCK && errno != EAGAIN) {
-                            perror("Erreur lors de la lecture des données");
-                            exit(1);
-                        }
+                        if (errno != EWOULDBLOCK && errno != EAGAIN)
+                            throw std::runtime_error("reading buffer");
                     }
                     else if (bytesRead == 0)
                     {
