@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 00:31:42 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 16:52:47 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void server_exec(Server &server)
                         if (errno != EWOULDBLOCK && run == true && errno != EAGAIN)
                             throw std::runtime_error("reading buffer");
                     }
-                    else if (bytesRead == 0)
+                    else if (buffer.find("QUIT") != std::string::npos || bytesRead == 0)
                     {
                         // Connexion fermée par le client
                         server.close_fd(i);
@@ -103,9 +103,12 @@ void server_exec(Server &server)
                     if (buffer.find("USER") != std::string::npos)
                     {
                         if (server.UserExist_fd(i))
+                        {
                             server.getUser(i).setUsername(find_next_word(buffer.find("USER") + 5, buffer));
+                            server.getUser(i).setRealsname(buffer.substr(buffer.find(":") + 1, buffer.size() - buffer.find(":")));
+                            server.getUser(i).setHotsname(find_previous_word(buffer.find(":") - 1, buffer));
+                        }
                     }
-                   
                     if (welcome[i] == true)
                     {
                         parse_buffer(buffer, server, i);

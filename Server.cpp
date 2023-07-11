@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 00:23:20 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 02:48:37 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,7 @@ void Server::deleteUser(int i)
     {
         Channel& channel = *it;
         if (channel.find_channels(i))
-            send_whitelist(*this, i, channel.getName(), (": PRIVMSG #" + channel.getName() + " :" + this->getUser(i).returnNickname() + " is away\r\n").c_str());
+            send_whitelist(*this, i, channel.getName(), (": PRIVMSG #" + channel.getName() + " :" + this->getUser(i).returnNickname() + " has disconnected\r\n").c_str());
         channel.removeOperator(i);
         channel.removeWhiteList(i);
     }

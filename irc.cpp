@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 00:08:44 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 17:04:01 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,14 @@ std::string find_next_word(int i, std::string str)
     while (str[i] != '\r' && str[i] != '\0' && str[i] != ' ' && str[i] != '\n')
         i++;
     return (str.substr(j, i - j));
+}
+
+std::string find_previous_word(int i, std::string str)
+{
+    int j = i - 1;
+    while (j >= 0 && str[j] != '\r' && str[j] != ' ' && str[j] != '\n')
+        j--;
+    return str.substr(j + 1, (i - 1) - j);
 }
 
 void send_whitelist(Server &server, int fd, std::string channel, std::string buffer)
@@ -46,6 +54,22 @@ void parse_buffer(std::string buffer, Server &server, int fd)
         join_funct(buffer, server, fd);
     if (buffer.find("PRIVMSG") != std::string::npos)
         privmsg_funct(buffer, server, fd);
+    if (buffer.find("WHO #") != std::string::npos)
+    {
+        std::vector<int> oper = server.getChannel(find_next_word(5, buffer)).getOperators();
+        for (std::vector<int>::iterator it = oper.begin(); it != oper.end(); ++it)
+	    {
+            if (fd != *it)
+		        server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 352 " + server.getUser(fd).returnNickname() + " " + find_next_word(4, buffer) + " " + server.getUser(*it).returnUsername() + " " + server.getUser(*it).returnHostname() + " " + std::string(SERVER_NAME) + " " + server.getUser(*it).returnNickname() + " H :0 " + server.getUser(*it).returnRealname() + "\r\n").c_str());
+        }
+        std::vector<int> whitelist = server.getChannel(find_next_word(5, buffer)).getWhiteList();
+        for (std::vector<int>::iterator it = whitelist.begin(); it != whitelist.end(); ++it)
+	    {
+            if (fd != *it)
+		        server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 352 " + server.getUser(fd).returnNickname() +  " " + find_next_word(4, buffer) + " " + server.getUser(*it).returnUsername() + " " + server.getUser(*it).returnHostname() + " " + std::string(SERVER_NAME) + " " + server.getUser(*it).returnNickname() + " V :0 " + server.getUser(*it).returnRealname() + "\r\n").c_str());
+        }
+        server.get_send_fd(fd).append((":" + std::string(SERVER_NAME) + " 315 " + server.getUser(fd).returnNickname() + " " + find_next_word(4, buffer) + " :End of WHO list\r\n").c_str());
+    }
 }
 
 void send_function(Server &server, std::vector<pollfd> fds)

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 21:56:10 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 17:04:35 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,26 @@
 #include <cstdio>
 #include <cerrno>
 
-#define MAX_CLIENTS 10
-
 class User
 {
     private:
         std::string _nickname;
         std::string _username;
+        std::string _hostname;
+        std::string _realname;
         int fd;
     public:
         User(std::string nickname, int i);
-        ~User() {this->_nickname.clear(); this->fd = -1; this->_username.clear();};
+        ~User() {this->_nickname.clear(); this->fd = -1; this->_username.clear(); this->_realname.clear(); this->_hostname.clear();};
         std::string returnNickname();
         std::string returnUsername();
+        std::string returnHostname();
+        std::string returnRealname();
         int returnFd();
         void setUsername(std::string newUsername);
+        void setHotsname(std::string newHostname);
+        void setRealsname(std::string newRealname);
+        
 };
 
 #endif

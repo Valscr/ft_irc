@@ -6,7 +6,7 @@
 #    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/07 20:51:27 by valentin          #+#    #+#              #
-#    Updated: 2023/07/09 22:55:56 by valentin         ###   ########.fr        #
+#    Updated: 2023/07/11 17:46:03 by valentin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,6 @@ all:			$(NAME)
 
 $(NAME):		$(OBJS)
 				$(CC) $(WFLAGS) -o $(NAME) $(OBJS)
-
 clean:
 				$(RM) $(OBJS)
 

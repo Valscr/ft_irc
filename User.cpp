@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 21:54:23 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 17:15:18 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,16 @@ std::string User::returnUsername()
     return (this->_username);
 }
 
+std::string User::returnHostname()
+{
+    return (this->_hostname);
+}
+
+std::string User::returnRealname()
+{
+    return (this->_realname);
+}
+
 int User::returnFd()
 {
     return (this->fd);
@@ -48,4 +58,16 @@ int User::returnFd()
 void User::setUsername(std::string newUsername)
 {
     this->_username = newUsername;
+}
+
+void User::setHotsname(std::string newHostname)
+{
+    this->_hostname = newHostname;
+}
+
+void User::setRealsname(std::string newRealname)
+{
+
+    this->_realname = newRealname;
+    
 }

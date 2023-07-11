@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 00:05:28 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/10 16:36:59 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 #include "Channel.hpp"
 #include <signal.h>
 
-#define MAX_CLIENTS 10
+#define MAX_CLIENTS 20
 #define SERVER_NAME "server-irc"
 #define BUFFER_SIZE 1024
 #define ANSI_RESET "\033[0m"
@@ -46,6 +46,7 @@ class Channel;
 
 void server_exec(Server &server);
 std::string find_next_word(int i, std::string str);
+std::string find_previous_word(int i, std::string str);
 void parse_buffer(std::string buffer, Server &server, int fd);
 void send_function(Server &server, std::vector<pollfd> fds);
 std::string msg_001(std::string user);
