@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 21:55:31 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/15 22:41:09 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ class Server
         User& getUserwithNickname(std::string name);
         int UserExist(std::string name);
         int UserExist_fd(int fd);
+        
+        //commands :
+        //void Kick(std::string channel, int fd_operator, int fd_victim, std::string reason);
 };
 
 #endif
