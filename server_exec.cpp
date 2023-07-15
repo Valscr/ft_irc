@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 16:52:47 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/15 23:41:31 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void server_exec(Server &server)
                             std::cout << "> " << msg_464().c_str() << std::endl;
                         }
                     }
-                    if (buffer.find("NICK") != std::string::npos)
+                    if (buffer.find("NICK") != std::string::npos && password[i] == true)
                     {
                         if (password[i] == true)
                         {
@@ -100,7 +100,7 @@ void server_exec(Server &server)
                             welcome[i] = true;
                         }
                     }
-                    if (buffer.find("USER") != std::string::npos)
+                    if (buffer.find("USER") != std::string::npos && password[i] == true)
                     {
                         if (server.UserExist_fd(i))
                         {

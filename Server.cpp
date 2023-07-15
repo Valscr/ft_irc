@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/15 22:33:26 by marvin           ###   ########.fr       */
+/*   Updated: 2023/07/10 02:48:37 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,62 +243,3 @@ Channel& Server::getChannel(std::string name)
     }
     throw std::runtime_error("Channel non trouvé");
 }
-
-// commands :
-
-struct ChannelNameComparer
-{
-    std::string name;
-
-    ChannelNameComparer(const std::string& name) : name(name) {}
-
-    bool operator()(Channel& channel) 
-    {
-        return channel.getName() == name;
-    }
-};
-/*
-void Server::Kick(std::string channel, int fd_operator, int fd_victim, std::string reason)
-{
-    ChannelNameComparer comparer(channel);
-    std::vector<Channel>::iterator it = std::find_if(this->channels.begin(), this->channels.end(), comparer);
-    if (it == this->channels.end())
-    {
-        this->get_send_fd(fd_operator).append(("ERR_NOSUCHCHANNEL")); //403
-        return ;
-    }
-    bool found = false;
-    for (std::vector<int>::iterator innerIt = it->getOperators().begin(); innerIt != it->getOperators().end(); ++innerIt)
-    {
-            if (*innerIt == fd_operator)
-            {
-                found = true;
-                break;
-            }
-    }
-    if (!found)
-    {
-        this->get_send_fd(fd_operator).append(("ERR_CHANOPRIVSNEEDED")); //482
-        return ;
-    }
-    found = false;
-    std::vector<int>::iterator innerIt;
-    for (innerIt = it->getWhiteList().begin(); innerIt != it->getWhiteList().end(); ++innerIt)
-    {
-            if (*innerIt == fd_victim)
-            {
-                found = true;
-                break;
-            }
-    }
-    if (!found)
-    {
-        this->get_send_fd(fd_operator).append(("ERR_USERNOTINCHANNEL")); //441
-        return ;
-    }
-    it->getWhiteList().erase(innerIt);
-    this->get_send_fd(fd_operator).append(("cest fait"));
-    if (!reason.empty())
-        this->get_send_fd(fd_operator).append((reason));
-    //envoyer le msg a tlm et ajouter la raison si elle existe
-}*/
