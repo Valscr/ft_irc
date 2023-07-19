@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 17:04:35 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/19 17:00:08 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,22 @@ class User
         std::string _username;
         std::string _hostname;
         std::string _realname;
-        int fd;
+        bool _password;
+        int _fd, _id;
     public:
-        User(std::string nickname, int i);
-        ~User() {this->_nickname.clear(); this->fd = -1; this->_username.clear(); this->_realname.clear(); this->_hostname.clear();};
+        User(std::string nickname, int fd, int id);
+        ~User() {this->_nickname.clear(); this->_fd = -1; this->_username.clear(); this->_realname.clear(); this->_hostname.clear();};
         std::string returnNickname();
         std::string returnUsername();
         std::string returnHostname();
         std::string returnRealname();
         int returnFd();
+        int returnId();
+        bool returnPassword();
         void setUsername(std::string newUsername);
         void setHotsname(std::string newHostname);
         void setRealsname(std::string newRealname);
+        void setPassword(bool value);
         
 };
 

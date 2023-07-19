@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 16:36:59 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/19 15:01:28 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,9 @@ std::string find_previous_word(int i, std::string str);
 void parse_buffer(std::string buffer, Server &server, int fd);
 void send_function(Server &server, std::vector<pollfd> fds);
 std::string msg_001(std::string user);
-std::string msg_464();
+void msg_464();
+void msg_462();
+void msg_421();
 std::string msg_353(Server &server, std::string channel);
 int is_port(char *str);
 void join_funct(std::string buffer, Server &server, int fd);

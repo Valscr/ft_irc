@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 21:55:31 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/19 17:48:09 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,36 +28,44 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cerrno>
+#include "Commands.hpp"
 
 class User;
 class Channel;
+class Commands;
 
 class Server
 {
     private:
-        std::vector<pollfd> fds;
+        int port, listenSocket, clientSocket;
         std::string name;
-        int port;
+        std::vector<pollfd> fds;
+        
+        
         std::string password;
         std::vector<Channel> channels;
         std::vector<User> users;
         struct sockaddr_in serverAddress;
-        int listenSocket, clientSocket;
         std::map<int, std::string> send_client;
+
+    
+    
     public:
+        Commands *commands;
+        std::vector<User> getUsersList();
         Server(int port, std::string password);
         ~Server() {};
         void createChannel(std::string name, int fd);
         Channel& getChannel(std::string name);
         int find_channel(std::string name);
-        void createUser(std::string nickname, int i);
+        void createUser(std::string nickname, int id, int fd);
         void get_listen_socket(int listensocket);
         std::vector<pollfd> &get_fds();
         int getListensocket();
         int getClientsocket();
         void set_Clientsocket(int clientsocket);
         std::string get_password();
-        void set_fds_i_fd(int i);
+        void set_fds_i_fd();
         void close_fd(int i);
         void deleteUser(int index);
         User& getUser(int i);

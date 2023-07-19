@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   msg.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 14:23:00 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/09 12:14:12 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/19 15:01:18 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,18 @@ std::string msg_001(std::string user)
     return (( ":" + std::string(SERVER_NAME) + " 001 " + user + " :Welcome on " + std::string(SERVER_NAME) + " " + user + "\n").c_str());
 }
 
-std::string msg_464()
+void msg_421()
 {
-    return ((":" + std::string(SERVER_NAME) + " 464 client :Password required\n").c_str());
+    std::cout << ":" + std::string(SERVER_NAME) + " 421 client :Unknown command\n" << std::endl;
+}
+void msg_464()
+{
+    std::cout << ":" + std::string(SERVER_NAME) + " 464 client :Password required\n" << std::endl;
+}
+
+void msg_462()
+{
+    std::cout << ":" << std::string(SERVER_NAME) << "462 :Unauthorized command (already registered)\r\n" << std::endl;
 }
 
 std::string msg_353(Server &server, std::string channel)

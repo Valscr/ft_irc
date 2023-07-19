@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 17:15:18 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/19 14:39:12 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,31 @@ std::string to_string(int value)
     return oss.str();
 }
 
-User::User(std::string nickname, int i)
+User::User(std::string nickname, int fd, int id)
 {
-    if (nickname.empty())
-        this->_nickname = ("Client" + to_string(i)).c_str();
+    if (nickname == "")
+        this->_nickname = ("Client" + to_string(fd)).c_str();
     else
         this->_nickname = nickname;
-    this->_username = ("Client" + to_string(i)).c_str();
-    this->fd = i;
+    this->_username = ("Client" + to_string(fd)).c_str();
+    this->_fd = fd;
+    this->_id = id;
+    this->_password = false;
 }
 
 std::string User::returnNickname()
 {
     return (this->_nickname);
+}
+
+bool User::returnPassword()
+{
+    return (this->_password);
+}
+
+void User::setPassword(bool value)
+{
+    this->_password = value;
 }
 
 std::string User::returnUsername()
@@ -52,7 +64,12 @@ std::string User::returnRealname()
 
 int User::returnFd()
 {
-    return (this->fd);
+    return (this->_fd);
+}
+
+int User::returnId()
+{
+    return (this->_id);
 }
 
 void User::setUsername(std::string newUsername)

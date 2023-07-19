@@ -3,14 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
+#    By: skhali <skhali@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/07 20:51:27 by valentin          #+#    #+#              #
-#    Updated: 2023/07/11 17:46:03 by valentin         ###   ########.fr        #
+#    Updated: 2023/07/19 18:01:25 by skhali           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS			= main.cpp User.cpp Channel.cpp Server.cpp irc.cpp msg.cpp \
+SRCS			= main.cpp User.cpp Commands.cpp Channel.cpp Server.cpp irc.cpp msg.cpp \
 					server_exec.cpp utils.cpp command.cpp
 OBJS			= $(SRCS:.cpp=.o)
 
