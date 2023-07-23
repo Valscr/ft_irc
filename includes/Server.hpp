@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/19 17:48:09 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:42:38 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,36 +47,53 @@ class Server
         std::vector<User> users;
         struct sockaddr_in serverAddress;
         std::map<int, std::string> send_client;
-
+        Commands *commands;
     
     
     public:
-        Commands *commands;
-        std::vector<User> getUsersList();
+        
         Server(int port, std::string password);
         ~Server() {};
-        void createChannel(std::string name, int fd);
+
+
+        /****************GETTERS***************/
+
+        std::vector<User> getUsersList();
         Channel& getChannel(std::string name);
-        int find_channel(std::string name);
-        void createUser(std::string nickname, int id, int fd);
-        void get_listen_socket(int listensocket);
         std::vector<pollfd> &get_fds();
         int getListensocket();
         int getClientsocket();
-        void set_Clientsocket(int clientsocket);
+        Commands* getCommand();
         std::string get_password();
-        void set_fds_i_fd();
-        void close_fd(int i);
-        void deleteUser(int index);
         User& getUser(int i);
         std::string  &get_send_fd(int fd);
         std::map<int, std::string> &get_send();
-        void  erase_send(int fd);
-        void  add_send(int fd, std::string str);
         std::string get_name();
         User& getUserwithNickname(std::string name);
+        void  add_send(int fd, std::string str);
+
+        /******************SETTERS****************/
+
+        void set_Clientsocket(int clientsocket);
+        void set_fds_i_fd();
+
+        /************USERS MANAGEMENT METHODS************/
+
+        void createUser(std::string nickname, int id, int fd);
+        void deleteUser(int index);
         int UserExist(std::string name);
         int UserExist_fd(int fd);
+
+        /***************CHANNELS MANAGEMENT METHODS*****************/
+
+        void createChannel(std::string name, int fd);
+        int find_channel(std::string name);
+
+        /**************autre***************************************/
+        void close_fd(int i);
+        void erase_send(int fd);
+        void erase_fd(int i);
+        void freeEverything();
 };
 
 #endif

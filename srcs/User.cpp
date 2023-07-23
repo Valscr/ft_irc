@@ -3,22 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: smecili <smecili@student.42.fr>            +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/20 17:46:25 by smecili          ###   ########.fr       */
+/*   Updated: 2023/07/21 17:10:58 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/User.hpp"
 #include "../includes/irc.hpp"
 
+/***********************************************************************/
+/*                                UTILS                               */
+/*********************************************************************/
 std::string to_string(int value)
 {
     std::ostringstream oss;
     oss << value;
     return oss.str();
 }
+
+/***********************************************************************/
+/*                   CONSTRUCTOR & DESTRUCTOR                         */
+/*********************************************************************/
 
 User::User(std::string nickname, int fd, int id)
 {
@@ -31,6 +38,10 @@ User::User(std::string nickname, int fd, int id)
     this->_id = id;
     this->_password = false;
 }
+
+/***********************************************************************/
+/*                          GETTERS & SETTERS                         */
+/*********************************************************************/
 
 std::string User::returnNickname()
 {

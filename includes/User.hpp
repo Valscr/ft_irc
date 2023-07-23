@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: smecili <smecili@student.42.fr>            +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/20 17:47:06 by smecili          ###   ########.fr       */
+/*   Updated: 2023/07/21 17:08:33 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,20 @@
 class User
 {
     private:
+
         std::string _nickname;
         std::string _username;
         std::string _hostname;
         std::string _realname;
         bool _password;
         int _fd, _id;
+
     public:
+
         User(std::string nickname, int fd, int id);
         ~User() {this->_nickname.clear(); this->_fd = -1; this->_username.clear(); this->_realname.clear(); this->_hostname.clear();};
+
+        /* Getters */
         std::string returnNickname();
         std::string returnUsername();
         std::string returnHostname();
@@ -47,6 +52,8 @@ class User
         int returnFd();
         int returnId();
         bool returnPassword();
+    
+        /* Setters */
         void setUsername(std::string newUsername);
         void setHotsname(std::string newHostname);
         void setRealsname(std::string newRealname);

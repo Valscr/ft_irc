@@ -19,14 +19,13 @@
 
 class Server;
 class	Commands {
-	
 	public:
-		typedef void (Commands::*fct)(std::vector<std::string> &, int, Server &);
 		Commands(void);
 		~Commands(void);
 
-		
-		std::map<std::string, fct> get_services(void)
+		/* Getters & setters*/
+		typedef void (Commands::*fct)(std::vector<std::string> &, int, Server &);
+		std::map<std::string, fct> setServices(void)
 		{
 			std::map<std::string, fct> commandMap;
 			commandMap.insert(std::make_pair("PASS", &Commands::PASS));
@@ -38,9 +37,13 @@ class	Commands {
 			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));*/
 			return (commandMap);
 		}
+		std::map<std::string, fct> getServices();
 
+		/* Commands methods*/
 		void		PASS(std::vector<std::string> &client, int id, Server &server);
-		std::map<std::string, fct> services_list;
+		private:
+			std::map<std::string, fct> services_list;
+
 };
 
 

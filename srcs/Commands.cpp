@@ -2,16 +2,32 @@
 #include "../includes/Server.hpp"
 #include "../includes/irc.hpp"
 
+
+/***********************************************************************/
+/*                   CONSTRUCTOR & DESTRUCTOR                         */
+/*********************************************************************/
+
+typedef void (Commands::*fct)(std::vector<std::string> &, int, Server &);
 Commands::Commands(void) 
 {
-    this->services_list = get_services();    
+    this->services_list = setServices();    
     return;
 }
 Commands::~Commands(void) { return; }
 
+
+/***********************************************************************/
+/*                         COMMANDS METHODS                           */
+/*********************************************************************/
+
 void Commands::PASS(std::vector<std::string> &command, int id, Server &server)
 {
     User user = server.getUsersList()[id - 1];
+    if (command.size() == 1)
+    {
+        msg_421();
+        return ;
+    }
     if (!user.returnPassword() && (command[1] == server.get_password()))
     {
         user.setPassword(true);
@@ -24,19 +40,16 @@ void Commands::PASS(std::vector<std::string> &command, int id, Server &server)
     {
         msg_464();
         //fonction de deconnexion à coder
-        server.close_fd(server.get_fds()[id].fd);
+        //server.close_fd(server.get_fds()[id].fd);
         std::cout << "User " << id << " disconnected\n" << std::endl;
     }
 }
 
-                       /* std::cout << "je teste si le mdp est correct" << server.get_password() << std::endl;
-                         std::cout << find_next_word(buffer.find("PASS") + 5, buffer) << std::endl;
-                        if (server.get_password() == find_next_word(buffer.find("PASS") + 5, buffer))
-                        {
-                            password[i] = true;
-                        }
-                        else
-                        {
-                            send(server.get_fds()[i].fd, msg_464().c_str(), msg_464().length(), 0);
-                            std::cout << "> " << msg_464().c_str() << std::endl;
-                        }*/
+/***********************************************************************/
+/*                          GETTERS & SETTERS                         */
+/*********************************************************************/
+
+std::map<std::string, fct> Commands::getServices()
+{
+    return (this->services_list);
+}

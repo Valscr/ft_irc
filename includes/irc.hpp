@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/19 15:01:28 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:42:08 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ class User;
 class Server;
 class Channel;
 
-void server_exec(Server &server);
+int disconnect(int i, Server &server, bool end);
+int server_exec(Server &server);
 std::string find_next_word(int i, std::string str);
 std::string find_previous_word(int i, std::string str);
 void parse_buffer(std::string buffer, Server &server, int fd);

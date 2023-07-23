@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_exec.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: smecili <smecili@student.42.fr>            +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/20 17:46:10 by smecili          ###   ########.fr       */
+/*   Updated: 2023/07/23 15:42:51 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,21 @@
 typedef void (*fct)(std::vector<std::string> &, int, Server &);
 
 bool run;
+int disconnect(int i, Server &server, bool end)
+{
+    int id;
+    try {
+        id = server.getUser(40).returnId();
+        server.deleteUser(server.get_fds()[i].fd);
+        server.close_fd(i);
+        server.erase_fd(i);
+    } catch (const std::runtime_error& e) {
+        return (server.freeEverything(), 0);
+    }
+    if (!end)
+        std::cout << "User " << id << " disconnected"<< std::endl;
+    return (1);
+}
 
 void handleSignal(int signal)
 {
@@ -28,7 +43,8 @@ void handleSignal(int signal)
 
 void new_user(Server &server)
 {
-    static int id = 0;
+    static int id = 1;
+    int nb_fds = server.get_fds().size();
     server.set_Clientsocket(accept(server.getListensocket(), NULL, NULL)); 
     if (server.getClientsocket() < 0) {
         if (errno != EWOULDBLOCK && errno != EAGAIN)
@@ -38,8 +54,9 @@ void new_user(Server &server)
             throw std::runtime_error("configuration socket in non-blocking mode");
         server.set_fds_i_fd();
         server.createUser("", id, server.get_fds().back().fd);
-        int fd = server.getUsersList()[id].returnFd();
-		std::cout << "Client " << id + 1 << "[" << fd << "]" << " connected" << std::endl;
+        std::cout << nb_fds << std::endl;
+        int fd = server.getUsersList()[nb_fds - 1].returnFd();
+		std::cout << "Client " << id << "[" << fd << "]" << " connected" << std::endl;
         id++;
     }
 }
@@ -73,7 +90,7 @@ std::vector<std::string>	split_command(std::string str) {
 
 void exec_command(std::vector<std::string> command, Server &server, int id, std::map<std::string, Commands::fct> services)
 {
-     std::map<std::string, Commands::fct>::iterator it = services.find(command[0]);
+    std::map<std::string, Commands::fct>::iterator it = services.find(command[0]);
 
     if (it != services.end()) {
         Commands cmdObject; // Créez une instance de la classe Commands
@@ -84,7 +101,8 @@ void exec_command(std::vector<std::string> command, Server &server, int id, std:
     }
 
 }
-void server_exec(Server &server)
+
+int server_exec(Server &server)
 {
     char buffer[BUFFER_SIZE];
     //bool password[MAX_CLIENTS + 1];
@@ -101,25 +119,28 @@ void server_exec(Server &server)
     {
         if (poll(server.get_fds().data(), server.get_fds().size(), -1) < 0)
             handleSignal(1);
-        /*std::vector<pollfd> fds_test = server.get_fds();
+        std::vector<pollfd> fds_test = server.get_fds();
         std::cout << "-------------- fd tableau ----------------------" << std::endl;
         for (std::vector<pollfd>::iterator it = fds_test.begin() ; it != fds_test.end(); ++it)
             std::cout << it->fd << std::endl;
-        std::cout << "----------------" << server.get_fds().size() << "------------------------" << std::endl;*/
+        std::cout << "----------------" << server.get_fds().size() << "------------------------" << std::endl;
+        std::vector<User> user_test = server.getUsersList();
+        std::cout << "-------------- users tableau ----------------------" << std::endl;
+        for (std::vector<User>::iterator it1 = user_test.begin() ; it1 != user_test.end(); ++it1)
+            std::cout << it1->returnId() << " et fd : " << it1->returnFd()<< std::endl;
+        std::cout << "----------------------------------------" << std::endl;
         // Vérifier les événements sur les descripteurs de fichiers surveillés
         for (size_t i = 0; i < server.get_fds().size(); i++)
         {
             //std::cout << "fd actuel :" << server.get_fds()[i].fd  << std::endl;
             if (server.get_fds()[i].revents)
             {
-                //std::cout << "un evenement s'est produit"<< std::endl;
-                //ajouter la nouvelle connexion aux datas du serveur
                 if (server.get_fds()[i].fd == server.getListensocket())
                     new_user(server);
                 else if (server.get_fds()[i].revents & POLLRDHUP)
                 {
-                    server.close_fd(i);
-                    std::cout << "User " << i << " disconnected\n" << std::endl;
+                    if(!disconnect(i, server, false))
+                        return 0;
                 }
                 else 
                 {
@@ -131,12 +152,10 @@ void server_exec(Server &server)
                     }
                     else if (bytesRead == 0)
                     {
-                        // Connexion fermée par le client
-                        server.close_fd(i);
-                        //std::cout << server.getUser(i).returnFd() << " disconnected\n" << std::endl;
-                        //server.deleteUser(i);
+                        if(!disconnect(i, server, false))
+                            return 0;
                     }
-                    else
+                    /*else
                     {
                         buffer[bytesRead] = '\0';
                         std::string received_data(buffer);
@@ -148,11 +167,11 @@ void server_exec(Server &server)
                             std::vector<std::string> command = split_command(*it);
                             //note : dans user, i = id + 1
                             //server.get_fds()[i].fd
-                            exec_command(command, server, i, server.commands->services_list);
+                            exec_command(command, server, i, server.getCommand()->getServices());
                         }
                         std::cout << "----------------------------------------------" << std::endl;
 
-                    }
+                    }*/
                     /*else if (password[i] == false)
                     {
                         std::cout << "je teste si le mdp est correct" << server.get_password() << std::endl;
@@ -199,6 +218,6 @@ void server_exec(Server &server)
             }
         }
     }
-    for (size_t i = 0; i < server.get_fds().size(); i++)
-        close(server.get_fds()[i].fd);
+    server.freeEverything();
+    return 1;
 }
