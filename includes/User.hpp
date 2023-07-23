@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/21 17:08:33 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 23:15:39 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ class User
         std::string _hostname;
         std::string _realname;
         bool _password;
+        bool _registered;
+        bool _hasnickname;
         int _fd, _id;
 
     public:
@@ -52,12 +54,18 @@ class User
         int returnFd();
         int returnId();
         bool returnPassword();
+        bool returnRegistered();
+        bool returnHasNickname();
     
         /* Setters */
+        void setNickname(std::string newNickname);
         void setUsername(std::string newUsername);
         void setHotsname(std::string newHostname);
         void setRealsname(std::string newRealname);
         void setPassword(bool value);
+        void setRegistered(bool value);
+        void setHasNickname(bool value);
+
         
 };
 

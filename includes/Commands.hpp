@@ -29,11 +29,10 @@ class	Commands {
 		{
 			std::map<std::string, fct> commandMap;
 			commandMap.insert(std::make_pair("PASS", &Commands::PASS));
-			/*commandMap.insert(std::make_pair("NICK", &Commands::NICK));
+			commandMap.insert(std::make_pair("NICK", &Commands::NICK));
 			commandMap.insert(std::make_pair("USER", &Commands::USER));
-			commandMap.insert(std::make_pair("PING", &Commands::PONG));
-			commandMap.insert(std::make_pair("PONG", &Commands::PING));
-			commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));
+			commandMap.insert(std::make_pair("PING", &Commands::PING));
+			/*commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));
 			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));*/
 			return (commandMap);
 		}
@@ -41,6 +40,12 @@ class	Commands {
 
 		/* Commands methods*/
 		void		PASS(std::vector<std::string> &client, int id, Server &server);
+		void		NICK(std::vector<std::string> &client, int id, Server &server);
+		void		USER(std::vector<std::string> &client, int id, Server &server);
+		void		PING(std::vector<std::string> &client, int id, Server &server);
+
+		/* Utils */
+		int validNickname(std::string nickname);
 		private:
 			std::map<std::string, fct> services_list;
 

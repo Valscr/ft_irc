@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 15:42:38 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 21:19:03 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ class Server
         void deleteUser(int index);
         int UserExist(std::string name);
         int UserExist_fd(int fd);
+        bool NicknameMatching(std::string nickname);
 
         /***************CHANNELS MANAGEMENT METHODS*****************/
 

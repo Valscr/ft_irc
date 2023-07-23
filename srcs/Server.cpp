@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 16:34:06 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/24 00:31:28 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ User& Server::getUser(int i)
 
 User& Server::getUserwithNickname(std::string name)
 {
-    for (size_t j = 0; j <= this->users.size(); j++)
+    for (size_t j = 0; j < this->users.size(); j++)
     {
         if (this->users[j].returnNickname() == name)
         {
@@ -247,6 +247,17 @@ void Server::deleteUser(int i)
     throw std::runtime_error("Utilisateur non trouvé");
 }
 
+bool Server::NicknameMatching(std::string nickname)
+{
+    for (size_t j = 0; j < this->users.size(); j++)
+    {
+        if (this->users[j].returnNickname() == nickname)
+        {
+            return (true);
+        }
+    }
+    return (false);
+}
 /**************************************************************/
 /*              CHANNEL realted functions                    */
 /************************************************************/

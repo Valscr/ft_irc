@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 15:42:08 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 21:28:48 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ std::string msg_001(std::string user);
 void msg_464();
 void msg_462();
 void msg_421();
+void msg_431();
+void msg_432();
+void msg_433();
 std::string msg_353(Server &server, std::string channel);
 int is_port(char *str);
 void join_funct(std::string buffer, Server &server, int fd);

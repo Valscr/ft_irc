@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 16:31:12 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/24 00:29:52 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,9 @@ void new_user(Server &server)
         server.createUser("", id, server.get_fds().back().fd);
         std::cout << nb_fds << std::endl;
         int fd = server.getUsersList()[nb_fds - 1].returnFd();
-		std::cout << "Client " << id << "[" << fd << "]" << " connected" << std::endl;
-        id++;
+		std::cout << "Client " << id << "[" << fd << "]" << " created" << std::endl;
     }
+    id++;
 }
 std::vector<std::string>	split_buffer(int fd, std::string str, Server *server) {
 	std::string			line;
@@ -92,15 +92,13 @@ std::vector<std::string>	split_command(std::string str) {
 void exec_command(std::vector<std::string> command, Server &server, int id, std::map<std::string, Commands::fct> services)
 {
     std::map<std::string, Commands::fct>::iterator it = services.find(command[0]);
-
     if (it != services.end()) {
-        Commands cmdObject; // Créez une instance de la classe Commands
+        Commands cmdObject;
         Commands::fct cmd = it->second;
-        (cmdObject.*cmd)(command, id, server); // 
-    } else {
+        (cmdObject.*cmd)(command, id, server);
+    } else if (command[0] != "CAP"){
         msg_421();
     }
-
 }
 
 int server_exec(Server &server)
@@ -120,20 +118,8 @@ int server_exec(Server &server)
     {
         if (poll(server.get_fds().data(), server.get_fds().size(), -1) < 0)
             handleSignal(1);
-        std::vector<pollfd> fds_test = server.get_fds();
-        std::cout << "-------------- fd tableau ----------------------" << std::endl;
-        for (std::vector<pollfd>::iterator it = fds_test.begin() ; it != fds_test.end(); ++it)
-            std::cout << it->fd << std::endl;
-        std::cout << "----------------" << server.get_fds().size() << "------------------------" << std::endl;
-        std::vector<User> user_test = server.getUsersList();
-        std::cout << "-------------- users tableau ----------------------" << std::endl;
-        for (std::vector<User>::iterator it1 = user_test.begin() ; it1 != user_test.end(); ++it1)
-            std::cout << it1->returnId() << " et fd : " << it1->returnFd()<< std::endl;
-        std::cout << "----------------------------------------" << std::endl;
-        // Vérifier les événements sur les descripteurs de fichiers surveillés
         for (size_t i = 0; i < server.get_fds().size(); i++)
         {
-            //std::cout << "fd actuel :" << server.get_fds()[i].fd  << std::endl;
             if (server.get_fds()[i].revents)
             {
                 if (server.get_fds()[i].fd == server.getListensocket())
@@ -156,65 +142,26 @@ int server_exec(Server &server)
                         if(!disconnect(i, server, false))
                             return 0;
                     }
-                    /*else
+                    else
                     {
                         buffer[bytesRead] = '\0';
                         std::string received_data(buffer);
-                        //boucle pour etre sur d'avoir tout recu
-                        std::cout << "------------ buffer de " << server.get_fds()[i].fd << "------------" << std::endl;
                         std::vector<std::string> inputs = split_buffer(server.get_fds()[i].fd, received_data, &server);
                         for (std::vector<std::string>::iterator it = inputs.begin() ; it != inputs.end(); ++it)
                         {
+                            std::cout << "------------------------------" << std::endl;
                             std::vector<std::string> command = split_command(*it);
-                            //note : dans user, i = id + 1
-                            //server.get_fds()[i].fd
-                            exec_command(command, server, i, server.getCommand()->getServices());
-                        }
-                        std::cout << "----------------------------------------------" << std::endl;
-
-                    }*/
-                    /*else if (password[i] == false)
-                    {
-                        std::cout << "je teste si le mdp est correct" << server.get_password() << std::endl;
-                         std::cout << find_next_word(buffer.find("PASS") + 5, buffer) << std::endl;
-                        if (server.get_password() == find_next_word(buffer.find("PASS") + 5, buffer))
-                        {
-                            password[i] = true;
-                        }
-                        else
-                        {
-                            send(server.get_fds()[i].fd, msg_464().c_str(), msg_464().length(), 0);
-                            std::cout << "> " << msg_464().c_str() << std::endl;
-                        }
-                    }*/
-                    //else if (server.UserExist_fd(i))
-
-                    /*if (buffer.find("NICK") != std::string::npos && password[i] == true)
-                    {
-                        if (password[i] == true)
-                        {
-                            server.createUser(find_next_word(buffer.find("NICK") + 5, buffer), i);
-                            server.get_send().insert(std::make_pair(i, ""));
-                            send(server.get_fds()[i].fd, msg_001(server.getUser(i).returnNickname()).c_str(), msg_001(server.getUser(i).returnNickname()).length(), 0);
-                            std::cout << ANSI_GREEN << MAX_CLIENTS + 1 - i << " > " << msg_001(server.getUser(i).returnNickname()).c_str() << ANSI_RESET << std::endl;
-                            welcome[i] = true;
+                            std::cout << "\033[96m" << server.getUser(server.get_fds()[i].fd).returnId() << " > " << (*it) << "\033[0m" << std::endl;
+                            if ((server.getUser(server.get_fds()[i].fd).returnPassword() == true) || ((command[0] == "PASS") || (command[0] == "CAP")))
+                                exec_command(command, server, i, server.getCommand()->getServices());
+                            else
+                            {
+                                disconnect(i, server, true);
+                                std::cout << ":password missing" << std::endl;
+                                break ;
+                            }
                         }
                     }
-                    if (buffer.find("USER") != std::string::npos && password[i] == true)
-                    {
-                        if (server.UserExist_fd(i))
-                        {
-                            server.getUser(i).setUsername(find_next_word(buffer.find("USER") + 5, buffer));
-                            server.getUser(i).setRealsname(buffer.substr(buffer.find(":") + 1, buffer.size() - buffer.find(":")));
-                            server.getUser(i).setHotsname(find_previous_word(buffer.find(":") - 1, buffer));
-                        }
-                    }*/
-                    //if (welcome[i] == true)
-                    //{
-
-                        //parse_buffer(buffer, server, i);
-                        //send_function(server, server.get_fds());
-                    //}
                 }
             }
         }

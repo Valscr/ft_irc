@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/21 17:10:58 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 23:31:03 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ User::User(std::string nickname, int fd, int id)
     this->_fd = fd;
     this->_id = id;
     this->_password = false;
+    this->_registered = false;
+    this->_hasnickname = false;
 }
 
 /***********************************************************************/
@@ -83,6 +85,25 @@ int User::returnId()
     return (this->_id);
 }
 
+bool User::returnRegistered()
+{
+    return (this->_registered);
+}
+
+bool User::returnHasNickname()
+{
+    return (this->_hasnickname);
+}
+void User::setRegistered(bool value)
+{
+    this->_username = value;
+}
+
+void User::setHasNickname(bool value)
+{
+    this->_hasnickname = value;
+}
+
 void User::setUsername(std::string newUsername)
 {
     this->_username = newUsername;
@@ -98,4 +119,10 @@ void User::setRealsname(std::string newRealname)
 
     this->_realname = newRealname;
     
+}
+
+void User::setNickname(std::string newNickname)
+{
+
+    this->_nickname = newNickname;  
 }
