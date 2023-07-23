@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 15:44:21 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 16:34:06 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,29 @@ Server::Server(int port, std::string password)
     
     this->listenSocket = (socket(AF_INET, SOCK_STREAM, 0));
     if (this->listenSocket < 0)
+    {
+        this->freeEverything();
         throw std::runtime_error("creation socket 1.\n");
+    }
     memset(&this->serverAddress, 0, sizeof(this->serverAddress));
     this->serverAddress.sin_family = AF_INET;
     this->serverAddress.sin_addr.s_addr = INADDR_ANY;
     this->serverAddress.sin_port = htons(port);
     if (bind(this->listenSocket, reinterpret_cast<struct sockaddr*>(&this->serverAddress), sizeof(this->serverAddress)) == -1)
+    {
+        this->freeEverything();
         throw std::runtime_error("creation socket 2.\n");
+    }
     if (listen(this->listenSocket, MAX_CLIENTS) < 0)
+    {
+        this->freeEverything();
         throw std::runtime_error("creation socket 3.\n");
+    }
     if (fcntl(this->listenSocket, F_SETFL, O_NONBLOCK) < 0)
+    {
+        this->freeEverything();
         throw std::runtime_error("creation socket 4.\n");
+    }
     this->fds.push_back(pollfd());
     this->fds[0].fd = this->listenSocket;
     this->fds[0].events = POLLIN | POLLOUT;
@@ -49,11 +61,10 @@ Server::Server(int port, std::string password)
 
 void Server::set_fds_i_fd()
 {
-    static int i = 1;
+    int i = this->fds.size();
     this->fds.push_back(pollfd());
     this->fds[i].fd = this->clientSocket;
     this->fds[i].events = POLLIN | POLLRDHUP;
-    i++;
 }
 
 void Server::set_Clientsocket(int clientsocket)

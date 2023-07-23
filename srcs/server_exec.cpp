@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 15:42:51 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/23 16:31:12 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@ int disconnect(int i, Server &server, bool end)
 {
     int id;
     try {
-        id = server.getUser(40).returnId();
+        id = server.getUser(server.get_fds()[i].fd).returnId();
         server.deleteUser(server.get_fds()[i].fd);
         server.close_fd(i);
         server.erase_fd(i);
     } catch (const std::runtime_error& e) {
+        std::cout << "Error: " << e.what();
         return (server.freeEverything(), 0);
     }
     if (!end)
