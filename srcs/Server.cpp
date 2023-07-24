@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 00:31:28 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/24 15:33:56 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ User& Server::getUser(int i)
             return this->users[j];
         }
     }
-    throw std::runtime_error("Utilisateur non trouvé\n");
+    throw std::runtime_error("getUser :Utilisateur non trouvé\n");
 }
 
 User& Server::getUserwithNickname(std::string name)
@@ -160,7 +160,7 @@ User& Server::getUserwithNickname(std::string name)
             return this->users[j];
         }
     }
-    throw std::runtime_error("Utilisateur non trouvé");
+    throw std::runtime_error("getUserwithNickname :Utilisateur non trouvé");
 }
 
 Channel& Server::getChannel(std::string name)
@@ -244,7 +244,7 @@ void Server::deleteUser(int i)
             return;
         }
     }
-    throw std::runtime_error("Utilisateur non trouvé");
+    throw std::runtime_error("deleteUser :Utilisateur non trouvé");
 }
 
 bool Server::NicknameMatching(std::string nickname)

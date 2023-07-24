@@ -24,7 +24,7 @@ class	Commands {
 		~Commands(void);
 
 		/* Getters & setters*/
-		typedef void (Commands::*fct)(std::vector<std::string> &, int, Server &);
+		typedef int (Commands::*fct)(std::vector<std::string> &, int, Server &);
 		std::map<std::string, fct> setServices(void)
 		{
 			std::map<std::string, fct> commandMap;
@@ -39,10 +39,10 @@ class	Commands {
 		std::map<std::string, fct> getServices();
 
 		/* Commands methods*/
-		void		PASS(std::vector<std::string> &client, int id, Server &server);
-		void		NICK(std::vector<std::string> &client, int id, Server &server);
-		void		USER(std::vector<std::string> &client, int id, Server &server);
-		void		PING(std::vector<std::string> &client, int id, Server &server);
+		int		PASS(std::vector<std::string> &client, int id, Server &server);
+		int		NICK(std::vector<std::string> &client, int id, Server &server);
+		int		USER(std::vector<std::string> &client, int id, Server &server);
+		int		PING(std::vector<std::string> &client, int id, Server &server);
 
 		/* Utils */
 		int validNickname(std::string nickname);

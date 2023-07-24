@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 23:31:03 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/24 15:08:02 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,9 @@ std::string to_string(int value)
 User::User(std::string nickname, int fd, int id)
 {
     if (nickname == "")
-        this->_nickname = ("Client" + to_string(fd)).c_str();
+        this->_nickname = "Hello"; //this->_nickname = ("Client" + to_string(fd)).c_str();
     else
         this->_nickname = nickname;
-    this->_username = ("Client" + to_string(fd)).c_str();
     this->_fd = fd;
     this->_id = id;
     this->_password = false;

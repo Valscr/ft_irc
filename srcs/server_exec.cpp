@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 00:29:52 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/24 15:48:33 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,16 +89,17 @@ std::vector<std::string>	split_command(std::string str) {
 	return res;
 }
 
-void exec_command(std::vector<std::string> command, Server &server, int id, std::map<std::string, Commands::fct> services)
+int exec_command(std::vector<std::string> command, Server &server, int id, std::map<std::string, Commands::fct> services)
 {
     std::map<std::string, Commands::fct>::iterator it = services.find(command[0]);
     if (it != services.end()) {
         Commands cmdObject;
         Commands::fct cmd = it->second;
-        (cmdObject.*cmd)(command, id, server);
+        return((cmdObject.*cmd)(command, id, server));
     } else if (command[0] != "CAP"){
         msg_421();
     }
+    return (1);
 }
 
 int server_exec(Server &server)
@@ -153,7 +154,10 @@ int server_exec(Server &server)
                             std::vector<std::string> command = split_command(*it);
                             std::cout << "\033[96m" << server.getUser(server.get_fds()[i].fd).returnId() << " > " << (*it) << "\033[0m" << std::endl;
                             if ((server.getUser(server.get_fds()[i].fd).returnPassword() == true) || ((command[0] == "PASS") || (command[0] == "CAP")))
-                                exec_command(command, server, i, server.getCommand()->getServices());
+                            {
+                                if (!exec_command(command, server, i, server.getCommand()->getServices()))
+                                    break;
+                            }
                             else
                             {
                                 disconnect(i, server, true);
