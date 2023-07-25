@@ -1,5 +1,32 @@
 #pragma once
 
+/*
+	NUMBERS:
+
+	001
+	353
+	381
+	401
+	402
+	403
+	409
+	421
+	431
+	432
+	433
+	436
+	441
+	442
+	461
+	462
+	464
+	476
+	481
+	482
+	483
+	491
+*/
+
 //Message PASS
 # define ERR_NEEDMOREPARAMS(command) ("461 " + command + " :Not enough parameters\r\n")  //Message USER and OPER and KILL
 # define ERR_ALREADYREGISTERED "462 :Unauthorized command (already registered)\r\n"      //Message SERVER and USER
@@ -29,6 +56,13 @@
 //Message SERVER
 # define RPL_WELCOME(nick, user, host) ("001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host + "\r\n")
 # define RPL_NAMREPLY(nick, user, host, channel) ("353 " + nick + "!" + user + "@" + host + " = " + channel + " :")
+
+//Message CHANNEL
+# define ERR_NOSUCHCHANNEL(channel) ("403 " + channel + " :No such channel\r\n")
+# define ERR_USERNOTINCHANNEL(nick, chan) ("441 " + nick + " " + chan + " :They aren't on that channel\r\n")
+# define ERR_NOTONCHANNEL(chan) ("442 " + chan + " :You're not on that channel\r\n")
+# define ERR_BADCHANMASK(channel) ("476 " + channel + " :Bad Channel Mask\r\n")
+# define ERR_CHANOPRIVSNEEDED(chan) ("482 " + chan + " :You're not channel operator\r\n")
 
 //Message COMMAND
 # define ERR_UNKNOWNCOMMAND(command) ("421 " + command + " :Unknown command\r\n")

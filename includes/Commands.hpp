@@ -43,6 +43,7 @@ class	Commands {
 		int		NICK(std::vector<std::string> &client, int id, Server &server);
 		int		USER(std::vector<std::string> &client, int id, Server &server);
 		int		PING(std::vector<std::string> &client, int id, Server &server);
+		void	Commands::KICK(std::vector<Channel> &chan, int id_operator, int id_victim, std::string reason, std::string name_chan);
 
 		/* Utils */
 		int validNickname(std::string nickname);

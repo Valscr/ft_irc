@@ -137,3 +137,11 @@ std::map<std::string, fct> Commands::getServices()
 {
     return (this->services_list);
 }
+
+/***********************************************************************/
+/*                          Sam's space                               */
+/*********************************************************************/
+
+// void Commands::KICK(std::vector<Channel> &chan, int id_operator, int id_victim, std::string reason, std::string name_chan)
+// {
+// }
