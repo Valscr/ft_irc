@@ -129,6 +129,20 @@ int Commands::PING(std::vector<std::string> &command, int id, Server &server)
     std::cout << ANSI_GREEN << server.getUser(server.get_fds()[id].fd).returnId() << " > " << msg.c_str() << ANSI_RESET << std::endl;
     return (1);
 }
+
+int Commands::JOIN(std::vector<std::string> &command, int id, Server &server)
+{
+    int fd = server.get_fds()[id].fd;
+	if (command.size() < 2)
+    {
+		//send_to(ERR_NEEDMOREPARAMS(string("JOIN")));
+		return 0;
+	}
+    //verifier si la ligne commence par # ?
+	
+    return 0;
+}
+
 /***********************************************************************/
 /*                          GETTERS & SETTERS                         */
 /*********************************************************************/

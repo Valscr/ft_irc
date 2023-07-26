@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 15:07:54 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/24 23:34:32 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,9 @@ class User
         void setPassword(bool value);
         void setRegistered(bool value);
         void setHasNickname(bool value);
+
+        /* Operators */
+		User &operator == (const User &other);
 
         
 };

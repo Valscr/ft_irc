@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: smecili <smecili@student.42.fr>            +#+  +:+       +#+        */
+/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/20 17:39:51 by smecili          ###   ########.fr       */
+/*   Updated: 2023/07/24 23:37:55 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,24 @@ void Channel::setInviteMode(bool state)
 	this->_invite_mode = state;
 }
 
+std::vector<User*> Channel::getUsers()
+{
+	return (this->_users);
+}
+
 std::string Channel::getName()
 {
     return (this->_name);
+}
+
+int Channel::alreadyExist(User *user)
+{
+	if(this->_users.empty())
+		return (0);
+	for (int i = 0; i < this->_users.size(); i++)
+	{
+		if (this->_users[i] == user)
+			return (1);
+	}
+	return (1);
 }
