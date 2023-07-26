@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 21:19:03 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/26 18:01:45 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ class Server
         std::string get_name();
         User& getUserwithNickname(std::string name);
         void  add_send(int fd, std::string str);
-
+        void    send_all(std::string msg);
         /******************SETTERS****************/
 
         void set_Clientsocket(int clientsocket);

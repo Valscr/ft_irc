@@ -6,7 +6,7 @@
 /*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 15:33:56 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/26 18:19:27 by skhali           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,6 +283,15 @@ int Server::find_channel(std::string name)
     return (0);
 }
 
+void Server::send_all(std::string msg)
+{
+    for (size_t  i = 0; i < this->fds.size(); i++)
+    {
+        if (this->getListensocket() == this->fds[i].fd)
+            continue ;
+        send(this->fds[i].fd, msg.c_str(), msg.length(), 0);
+    }
+}
 /**************************************************************/
 /*                            Utils                          */
 /************************************************************/
