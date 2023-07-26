@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 21:19:03 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/26 19:05:59 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ class Server
         void erase_send(int fd);
         void erase_fd(int i);
         void freeEverything();
+        void send_all(std::string msg);
 };
 
 #endif

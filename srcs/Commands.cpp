@@ -1,6 +1,8 @@
 #include "../includes/Commands.hpp"
 #include "../includes/Server.hpp"
 #include "../includes/irc.hpp"
+#include "../includes/msg.hpp"
+#include "../includes/Channel.hpp"
 
 
 /***********************************************************************/
@@ -142,6 +144,91 @@ std::map<std::string, fct> Commands::getServices()
 /*                          Sam's space                               */
 /*********************************************************************/
 
-// void Commands::KICK(std::vector<Channel> &chan, int id_operator, int id_victim, std::string reason, std::string name_chan)
-// {
-// }
+int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
+{
+    int id_client = server.getUser(server.get_fds()[id].fd).returnId();
+    std::vector<int>::iterator vict;
+    std::string reason;
+    Channel it;
+    int id_victim;
+    bool found = false;
+
+    if(command[1].empty())
+    {
+        send(server.get_fds()[id].fd, ERR_NOSUCHCHANNEL("Empty name").c_str(), ERR_NOSUCHCHANNEL("Empty name").length(), 0);
+        return 1;
+    }
+    try
+    {
+       it = server.getChannel(command[1]);
+    }
+    catch(const std::exception& e)
+    {
+        send(server.get_fds()[id].fd, ERR_NOSUCHCHANNEL(command[1]).c_str(), ERR_NOSUCHCHANNEL(command[1]).length(), 0);
+        return 1;
+    }
+    
+    if(command[2].empty())
+    {
+        send(server.get_fds()[id].fd, ERR_NOSUCHNICK("empty nickname").c_str(), ERR_NOSUCHNICK("empty nickname").length(), 0);
+        return 1;
+    }
+    try
+    {
+        id_victim = server.getUserwithNickname(command[2]).returnId();
+    }
+    catch(const std::exception& e)
+    {
+        send(server.get_fds()[id].fd, ERR_NOSUCHNICK(command[2]).c_str(), ERR_NOSUCHNICK(command[2]).length(), 0);
+        return 1;
+    }
+    found = false;
+    for (vict = (it).getWhiteList().begin(); vict != (it).getWhiteList().end(); ++vict)
+    {
+        if (*vict == id_victim)
+        {
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+    {
+        send(server.get_fds()[id].fd, ERR_USERNOTINCHANNEL(command[2], command[1]).c_str(), ERR_USERNOTINCHANNEL(command[2], command[1]).length(), 0);
+        return 1;
+    }
+    found = false;
+    for (std::vector<int>::iterator go = (it).getWhiteList().begin(); go != (it).getWhiteList().end(); ++go)
+    {
+        if (*go == id_client)
+        {
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+    {
+        send(server.get_fds()[id].fd, ERR_NOTONCHANNEL(command[1]).c_str(), ERR_NOTONCHANNEL(command[1]).length(), 0);
+        return 1;
+    }
+    found = false;
+    for (std::vector<int>::iterator go = (it).getOperators().begin(); go != (it).getOperators().end(); ++go)
+    {
+        if (*go == id_client)
+        {
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+    {
+        send(server.get_fds()[id].fd, ERR_CHANOPRIVSNEEDED(command[1]).c_str(), ERR_CHANOPRIVSNEEDED(command[1]).length(), 0);
+        return 1;
+    }
+    (it).getWhiteList().erase(vict);
+    if(command[3].empty())
+        reason = server.getUser(server.get_fds()[id].fd).returnNickname();
+    else
+        reason = command[3];
+    server.send_all(":" + server.getUser(server.get_fds()[id].fd).returnHostname() + " KICK " + command[1] + " " + command[2] + " :" + reason);
+    return 1;
+}

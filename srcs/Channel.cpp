@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: smecili <smecili@student.42.fr>            +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/20 17:39:51 by smecili          ###   ########.fr       */
+/*   Updated: 2023/07/26 19:45:19 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Channel.hpp"
+
+Channel::Channel()
+{}
 
 Channel::Channel(std::string name, int fd) : _name(name)
 {

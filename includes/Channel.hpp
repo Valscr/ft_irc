@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/10 00:23:40 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/26 19:44:34 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class Channel
         std::vector<int>    _bans;
         bool                _invite_mode;
     public:
+        Channel();
         Channel(std::string name, int fd);
         ~Channel();
         void addWhiteList(int fd);
