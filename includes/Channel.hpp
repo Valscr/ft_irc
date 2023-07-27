@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/26 19:44:34 by marvin           ###   ########.fr       */
+/*   Updated: 2023/07/27 17:11:39 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class Channel
 {
     private:
         std::string         _name;
+        std::string         _topic;
         std::vector<int>    _white_list;
         std::vector<int>    _operators;
         std::vector<int>    _bans;
@@ -36,8 +37,11 @@ class Channel
         void removeOperator(int fd);
         void removeBan(int fd);
         void setInviteMode(bool state);
+        void setTopic(std::string topic);
         std::string getName();
-        int find_channels(int fd);
+        int find_user_channels(int fd);
+        int is_ban(int fd);
+        int is_operator(int fd);
 
         std::vector<int>& getWhiteList() {return (this->_white_list);};
         std::vector<int>& getOperators() {return (this->_operators);};

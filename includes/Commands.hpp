@@ -32,9 +32,12 @@ class	Commands {
 			commandMap.insert(std::make_pair("NICK", &Commands::NICK));
 			commandMap.insert(std::make_pair("USER", &Commands::USER));
 			commandMap.insert(std::make_pair("PING", &Commands::PING));
-			/*commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));
-			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));*/
+			/*commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));*/
+			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));
 			commandMap.insert(std::make_pair("PRIVMSG", &Commands::PRIVMSG));
+			//commandMap.insert(std::make_pair("MODE", &Commands::MODE));
+			commandMap.insert(std::make_pair("TOPIC", &Commands::TOPIC));
+			//commandMap.insert(std::make_pair("INVITE", &Commands::INVITE));
 			return (commandMap);
 		}
 		std::map<std::string, fct> getServices();
@@ -46,6 +49,10 @@ class	Commands {
 		int		PING(std::vector<std::string> &client, int id, Server &server);
 		int		KICK(std::vector<std::string> &client, int id, Server &server);
 		int		PRIVMSG(std::vector<std::string> &client, int id, Server &server);
+		//int		MODE(std::vector<std::string> &client, int id, Server &server);
+		int		TOPIC(std::vector<std::string> &client, int id, Server &server);
+		//int		INVITE(std::vector<std::string> &client, int id, Server &server);
+		int		JOIN(std::vector<std::string> &client, int id, Server &server);
 
 		/* Utils */
 		int validNickname(std::string nickname);

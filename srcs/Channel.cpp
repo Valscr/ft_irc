@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/26 19:45:19 by marvin           ###   ########.fr       */
+/*   Updated: 2023/07/27 17:11:48 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,11 @@ void Channel::addWhiteList(int fd)
 		this->_white_list.push_back(fd);
 }
 
+void Channel::setTopic(std::string topic)
+{
+	this->_topic = topic;
+}
+
 void Channel::addOperator(int fd)
 {
 	std::vector<int>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), fd);
@@ -44,13 +49,29 @@ void Channel::addBan(int fd)
 		this->_bans.push_back(fd);
 }
 
-int Channel::find_channels(int fd)
+int Channel::find_user_channels(int fd)
 {
 	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
 	if (it != this->_white_list.end())
 		return (1);
 	std::vector<int>::iterator ito = std::find(this->_operators.begin(), this->_operators.end(), fd);
 	if (ito != this->_operators.end())
+		return (1);
+	return (0);
+}
+
+int Channel::is_ban(int fd)
+{
+	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
+	if (it != this->_bans.end())
+		return (1);
+	return (0);
+}
+
+int Channel::is_operator(int fd)
+{
+	std::vector<int>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), fd);
+	if (it != this->_operators.end())
 		return (1);
 	return (0);
 }

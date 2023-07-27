@@ -235,25 +235,82 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
 
 int		Commands::PRIVMSG(std::vector<std::string> &client, int id, Server &server)
 {
-    if (client[0].find("PRIVMSG #") != std::string::npos)
+    std::string buffer;
+
+    for (size_t i = 0; i < client.size(); ++i) {
+        buffer += client[i];
+        if (i < client.size() - 1) {
+            buffer += " ";
+        }
+    }
+    if (buffer.find("PRIVMSG #") != std::string::npos)
     {
-        if (server.find_channel(client[1]) && server.getChannel(client[1]).find_channels(id))
-            send_whitelist(server, id, client[1], (":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[0] + " " + client[1] + " " + client[2] + " " + client[3]).c_str());
-        else if (server.find_channel(client[1]) && !server.getChannel(client[1]).find_channels(id))
+        if (server.find_channel(find_next_word(9, buffer)) && server.getChannel(find_next_word(9, buffer)).find_user_channels(server.get_fds()[id].fd) && !server.getChannel(find_next_word(9, buffer)).is_ban(server.get_fds()[id].fd))
+            send_whitelist(server, server.get_fds()[id].fd, find_next_word(9, buffer), (":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer + "\r\n").c_str());
+        else if (server.find_channel(find_next_word(9, buffer)) && !server.getChannel(find_next_word(9, buffer)).find_user_channels(id))
         {
-            server.get_send_fd(server.getUserwithNickname(client[1]).returnFd()).append((":" + std::string(SERVER_NAME) + " 404 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " #" + client[2] + " :Cannot send message to this channel\r\n").c_str());
+            server.get_send_fd(server.getUserwithNickname(client[2]).returnFd()).append((":" + std::string(SERVER_NAME) + " 404 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1] + " :Cannot send message to this channel\r\n").c_str());
         }
         else
-            server.get_send_fd(server.getUserwithNickname(client[1]).returnFd()).append((":" + std::string(SERVER_NAME) + " 401 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " #" + client[2] + " :No such channel\r\n").c_str());
+            server.get_send_fd(server.getUserwithNickname(client[2]).returnFd()).append((":" + std::string(SERVER_NAME) + " 401 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1] + " :No such channel\r\n").c_str());
     }
     else
     {
         if (server.UserExist(client[1]))
-            server.get_send_fd(server.getUserwithNickname(client[1]).returnFd()).append((":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[0] + " " + client[1] + " " + client[2]).c_str());
+            server.get_send_fd(server.getUserwithNickname(client[1]).returnFd()).append((":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer + "\r\n").c_str());
         else
         {
-            server.get_send_fd(server.getUser(server.get_fds()[id].fd).returnFd()).append((":" + std::string(SERVER_NAME) + " 301 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1] + " :This user is disconnected.\r\n").c_str());
+            server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 301 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1] + " :This user is disconnected.\r\n").c_str());
         }
+    }
+    return 1;
+}
+
+int		Commands::TOPIC(std::vector<std::string> &client, int id, Server &server)
+{
+    std::string buffer;
+
+    for (size_t i = 2; i < client.size(); ++i) {
+        buffer += client[i];
+        if (i < client.size() - 1) {
+            buffer += " ";
+        }
+    }
+    if (server.find_channel(client[1].substr(1)) && server.getChannel(client[1].substr(1)).is_operator(server.get_fds()[id].fd))
+    {
+        send_whitelist(server, server.get_fds()[id].fd, client[1].substr(1), (":" + std::string(SERVER_NAME) + " 332 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1].substr(1) + " :" + buffer.substr(1) + "\r\n").c_str());
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1].substr(1) + " :" + buffer.substr(1) + "\r\n").c_str());
+    }
+    return (1);
+}
+
+int		Commands::JOIN(std::vector<std::string> &client, int id, Server &server)
+{
+    std::string buffer;
+
+    for (size_t i = 0; i < client.size(); ++i) {
+        buffer += client[i];
+        if (i < client.size() - 1) {
+            buffer += " ";
+        }
+    }
+    buffer += "\r\n";
+    if (server.find_channel(find_next_word(6, buffer)) && !server.getChannel(find_next_word(6, buffer)).is_ban(id))
+    {
+        server.getChannel(find_next_word(6, buffer)).addWhiteList(server.get_fds()[id].fd);
+        send_whitelist(server, server.get_fds()[id].fd, find_next_word(6, buffer), (":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer).c_str());
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer).c_str());
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 353 " + server.getUser(server.get_fds()[id].fd).returnNickname() +  " = #" + find_next_word(6, buffer) + " :" + msg_353(server, find_next_word(6, buffer)) + "\r\n").c_str());
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 366 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " #" + find_next_word(6, buffer) + " :End of NAMES list\r\n").c_str());
+    }
+    else if (server.find_channel(find_next_word(6, buffer)) && server.getChannel(find_next_word(6, buffer)).is_ban(id))
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 403 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(5, buffer) + " :" + "tou are banned from " + find_next_word(6, buffer) + "\r\n").c_str());
+    else
+    {
+        server.createChannel(find_next_word(6, buffer), server.get_fds()[id].fd);
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer).c_str());
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
     }
     return 1;
 }
