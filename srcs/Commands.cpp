@@ -295,7 +295,7 @@ int		Commands::JOIN(std::vector<std::string> &client, int id, Server &server)
         }
     }
     buffer += "\r\n";
-    if (server.find_channel(find_next_word(6, buffer)) && !server.getChannel(find_next_word(6, buffer)).is_ban(id))
+    if (server.find_channel(find_next_word(6, buffer)) && !server.getChannel(find_next_word(6, buffer)).is_ban(server.get_fds()[id].fd))
     {
         server.getChannel(find_next_word(6, buffer)).addWhiteList(server.get_fds()[id].fd);
         send_whitelist(server, server.get_fds()[id].fd, find_next_word(6, buffer), (":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer).c_str());
@@ -304,7 +304,7 @@ int		Commands::JOIN(std::vector<std::string> &client, int id, Server &server)
         server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 353 " + server.getUser(server.get_fds()[id].fd).returnNickname() +  " = #" + find_next_word(6, buffer) + " :" + msg_353(server, find_next_word(6, buffer)) + "\r\n").c_str());
         server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 366 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " #" + find_next_word(6, buffer) + " :End of NAMES list\r\n").c_str());
     }
-    else if (server.find_channel(find_next_word(6, buffer)) && server.getChannel(find_next_word(6, buffer)).is_ban(id))
+    else if (server.find_channel(find_next_word(6, buffer)) && server.getChannel(find_next_word(6, buffer)).is_ban(server.get_fds()[id].fd))
         server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 403 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(5, buffer) + " :" + "tou are banned from " + find_next_word(6, buffer) + "\r\n").c_str());
     else
     {
@@ -313,4 +313,15 @@ int		Commands::JOIN(std::vector<std::string> &client, int id, Server &server)
         server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(6, buffer) + " :Channel topic here\r\n").c_str());
     }
     return 1;
+}
+
+int		Commands::INVITE(std::vector<std::string> &client, int id, Server &server)
+{
+    if (server.find_channel(client[2].substr(1)) && server.UserExist(client[1]))
+    {
+        server.get_send_fd(server.getUserwithNickname(client[1]).returnFd()).append((":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " INVITE " + client[1] + " " + client[2] + "\r\n").c_str());
+        if (server.getChannel(client[2].substr(1)).is_ban(server.getUserwithNickname(client[1]).returnFd()))
+            server.getChannel(client[2].substr(1)).removeBan(server.getUserwithNickname(client[1]).returnFd());
+    }
+    return (1);
 }
