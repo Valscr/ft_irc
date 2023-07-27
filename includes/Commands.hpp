@@ -35,9 +35,10 @@ class	Commands {
 			/*commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));*/
 			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));
 			commandMap.insert(std::make_pair("PRIVMSG", &Commands::PRIVMSG));
-			//commandMap.insert(std::make_pair("MODE", &Commands::MODE));
 			commandMap.insert(std::make_pair("TOPIC", &Commands::TOPIC));
+			commandMap.insert(std::make_pair("KICK", &Commands::KICK));
 			//commandMap.insert(std::make_pair("INVITE", &Commands::INVITE));
+			//commandMap.insert(std::make_pair("MODE", &Commands::MODE));
 			return (commandMap);
 		}
 		std::map<std::string, fct> getServices();
