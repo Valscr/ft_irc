@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/27 22:00:29 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/27 22:53:46 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ Channel::Channel(std::string name, int fd) : _name(name)
 	this->_operators.push_back(fd);
 	this->_invite_mode = false;
 	this->_topic_restriction = true;
+	this->_user_limit_mode = false;
+	this->_user_limit = 0;
 }
 
 Channel::~Channel() {}
@@ -98,6 +100,11 @@ void Channel::removeBan(int fd)
 		this->_bans.erase(it);
 }
 
+int Channel::count_user()
+{
+	return (this->_operators.size() + this->_white_list.size());
+}
+
 void Channel::setInviteMode(bool state)
 {
 	this->_invite_mode = state;
@@ -116,6 +123,26 @@ void Channel::setTopicRestriction(bool state)
 int Channel::getTopicMode()
 {
 	return (this->_topic_restriction);
+}
+
+void Channel::setlimitMode(bool state)
+{
+	this->_user_limit_mode = state;
+}
+
+int Channel::getlimitMode()
+{
+	return (this->_user_limit_mode);
+}
+
+void Channel::setUserLimit(int limit)
+{
+	this->_user_limit = limit;
+}
+
+int Channel::getUserlimit()
+{
+	return (this->_user_limit);
 }
 
 std::string Channel::getName()

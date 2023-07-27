@@ -295,7 +295,7 @@ int		Commands::JOIN(std::vector<std::string> &client, int id, Server &server)
         }
     }
     buffer += "\r\n";
-    if (server.find_channel(find_next_word(6, buffer)) && !server.getChannel(find_next_word(6, buffer)).is_ban(server.get_fds()[id].fd))
+    if (server.find_channel(find_next_word(6, buffer)) && !server.getChannel(find_next_word(6, buffer)).is_ban(server.get_fds()[id].fd) && (!server.getChannel(find_next_word(6, buffer)).getlimitMode() || server.getChannel(find_next_word(6, buffer)).getUserlimit() > server.getChannel(find_next_word(6, buffer)).count_user()))
     {
         if ((server.getChannel(find_next_word(6, buffer)).getInviteMode() && server.getUser(server.get_fds()[id].fd).is_invite_channel(find_next_word(6, buffer))) || !server.getChannel(find_next_word(6, buffer)).getInviteMode())
         {
@@ -310,6 +310,8 @@ int		Commands::JOIN(std::vector<std::string> &client, int id, Server &server)
             server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 473 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(5, buffer) + " :\r\n").c_str());
 
     }
+    else if (server.find_channel(find_next_word(6, buffer)) && server.getChannel(find_next_word(6, buffer)).getlimitMode() && server.getChannel(find_next_word(6, buffer)).getUserlimit() <= server.getChannel(find_next_word(6, buffer)).count_user())
+        server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 471 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(5, buffer) + " :Channel is full\r\n").c_str());
     else if (server.find_channel(find_next_word(6, buffer)) && server.getChannel(find_next_word(6, buffer)).is_ban(server.get_fds()[id].fd))
         server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 403 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + find_next_word(5, buffer) + " :" + "you are banned from " + find_next_word(6, buffer) + "\r\n").c_str());
     else if (!server.find_channel(find_next_word(6, buffer)))
@@ -336,21 +338,27 @@ int		Commands::INVITE(std::vector<std::string> &client, int id, Server &server)
 int		Commands::MODE(std::vector<std::string> &client, int id, Server &server)
 {
     (void)id;
-    if (client[2].find("+i") != std::string::npos && server.find_channel(client[1].substr(1)))
+    if (server.find_channel(client[1].substr(1)) && server.getChannel(client[1].substr(1)).is_operator(server.get_fds()[id].fd))
     {
-        server.getChannel(client[1].substr(1)).setInviteMode(true);
-    }
-    if (client[2].find("-i") != std::string::npos && server.find_channel(client[1].substr(1)))
-    {
-        server.getChannel(client[1].substr(1)).setInviteMode(false);
-    }
-    if (client[2].find("+t") != std::string::npos && server.find_channel(client[1].substr(1)))
-    {
-        server.getChannel(client[1].substr(1)).setTopicRestriction(true);
-    }
-     if (client[2].find("-t") != std::string::npos && server.find_channel(client[1].substr(1)))
-    {
-        server.getChannel(client[1].substr(1)).setTopicRestriction(false);
+        if (client[2].find("+i") != std::string::npos && server.find_channel(client[1].substr(1)))
+            server.getChannel(client[1].substr(1)).setInviteMode(true);
+        if (client[2].find("-i") != std::string::npos && server.find_channel(client[1].substr(1)))
+            server.getChannel(client[1].substr(1)).setInviteMode(false);
+        if (client[2].find("+t") != std::string::npos && server.find_channel(client[1].substr(1)))
+            server.getChannel(client[1].substr(1)).setTopicRestriction(true);
+        if (client[2].find("-t") != std::string::npos && server.find_channel(client[1].substr(1)))
+            server.getChannel(client[1].substr(1)).setTopicRestriction(false);
+        if (client[2].find("+o") != std::string::npos && server.find_channel(client[1].substr(1)))
+            server.getChannel(client[1].substr(1)).addOperator(server.getUserwithNickname(client[3]).returnFd());
+        if (client[2].find("-o") != std::string::npos && server.find_channel(client[1].substr(1)))
+            server.getChannel(client[1].substr(1)).removeOperator(server.getUserwithNickname(client[3]).returnFd());
+        if (client[2].find("+l") != std::string::npos && server.find_channel(client[1].substr(1)))
+        {
+            server.getChannel(client[1].substr(1)).setlimitMode(true);
+            server.getChannel(client[1].substr(1)).setUserLimit(std::stoi(client[3]));
+        }
+        if (client[2].find("-l") != std::string::npos && server.find_channel(client[1].substr(1)))
+            server.getChannel(client[1].substr(1)).setlimitMode(false);
     }
     return (1);
 }
