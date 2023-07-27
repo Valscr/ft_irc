@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/27 20:21:33 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/27 22:00:29 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Channel::Channel(std::string name, int fd) : _name(name)
 {
 	this->_operators.push_back(fd);
 	this->_invite_mode = false;
+	this->_topic_restriction = true;
 }
 
 Channel::~Channel() {}
@@ -105,6 +106,16 @@ void Channel::setInviteMode(bool state)
 int Channel::getInviteMode()
 {
 	return (this->_invite_mode);
+}
+
+void Channel::setTopicRestriction(bool state)
+{
+	this->_topic_restriction = state;
+}
+
+int Channel::getTopicMode()
+{
+	return (this->_topic_restriction);
 }
 
 std::string Channel::getName()

@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/27 20:21:23 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/27 21:55:40 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class Channel
         std::vector<int>    _white_list;
         std::vector<int>    _operators;
         std::vector<int>    _bans;
+        bool                _topic_restriction;
         bool                _invite_mode;
     public:
         Channel();
@@ -43,6 +44,8 @@ class Channel
         int is_ban(int fd);
         int is_operator(int fd);
         int getInviteMode();
+        void setTopicRestriction(bool state);
+        int getTopicMode();
 
         std::vector<int>& getWhiteList() {return (this->_white_list);};
         std::vector<int>& getOperators() {return (this->_operators);};

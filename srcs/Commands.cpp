@@ -276,7 +276,7 @@ int		Commands::TOPIC(std::vector<std::string> &client, int id, Server &server)
             buffer += " ";
         }
     }
-    if (server.find_channel(client[1].substr(1)) && server.getChannel(client[1].substr(1)).is_operator(server.get_fds()[id].fd))
+    if (server.find_channel(client[1].substr(1)) && (server.getChannel(client[1].substr(1)).is_operator(server.get_fds()[id].fd) || !server.getChannel(client[1].substr(1)).getTopicMode()))
     {
         send_whitelist(server, server.get_fds()[id].fd, client[1].substr(1), (":" + std::string(SERVER_NAME) + " 332 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1].substr(1) + " :" + buffer.substr(1) + "\r\n").c_str());
         server.get_send_fd(server.get_fds()[id].fd).append((":" + std::string(SERVER_NAME) + " 332 " + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + client[1].substr(1) + " :" + buffer.substr(1) + "\r\n").c_str());
@@ -343,6 +343,14 @@ int		Commands::MODE(std::vector<std::string> &client, int id, Server &server)
     if (client[2].find("-i") != std::string::npos && server.find_channel(client[1].substr(1)))
     {
         server.getChannel(client[1].substr(1)).setInviteMode(false);
+    }
+    if (client[2].find("+t") != std::string::npos && server.find_channel(client[1].substr(1)))
+    {
+        server.getChannel(client[1].substr(1)).setTopicRestriction(true);
+    }
+     if (client[2].find("-t") != std::string::npos && server.find_channel(client[1].substr(1)))
+    {
+        server.getChannel(client[1].substr(1)).setTopicRestriction(false);
     }
     return (1);
 }
