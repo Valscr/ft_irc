@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:42 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 15:08:02 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/27 19:53:47 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,18 @@ void User::setRealsname(std::string newRealname)
 
 void User::setNickname(std::string newNickname)
 {
-
     this->_nickname = newNickname;  
+}
+
+void User::addInviteChannel(std::string channel)
+{
+	this->_invite_channels.push_back(channel);
+}
+
+int User::is_invite_channel(std::string channel)
+{
+    std::vector<std::string>::iterator it = std::find(this->_invite_channels.begin(), this->_invite_channels.end(), channel);
+	if (it != this->_invite_channels.end())
+		return (1);
+    return (0);
 }

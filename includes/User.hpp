@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:42:13 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 15:07:54 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/27 19:53:26 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class User
         std::string _username;
         std::string _hostname;
         std::string _realname;
+        std::vector<std::string> _invite_channels;
         bool _password;
         bool _registered;
         bool _hasnickname;
@@ -65,8 +66,8 @@ class User
         void setPassword(bool value);
         void setRegistered(bool value);
         void setHasNickname(bool value);
-
-        
+        void addInviteChannel(std::string channel);
+        int is_invite_channel(std::string channel);
 };
 
 #endif

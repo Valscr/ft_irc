@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/27 17:11:48 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/27 20:21:33 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,11 @@ void Channel::removeBan(int fd)
 void Channel::setInviteMode(bool state)
 {
 	this->_invite_mode = state;
+}
+
+int Channel::getInviteMode()
+{
+	return (this->_invite_mode);
 }
 
 std::string Channel::getName()
