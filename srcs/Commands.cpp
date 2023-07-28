@@ -224,6 +224,10 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
         send(server.get_fds()[id].fd, ERR_CHANOPRIVSNEEDED(command[1]).c_str(), ERR_CHANOPRIVSNEEDED(command[1]).length(), 0);
         return 1;
     }
+    std::vector<int> op = (it).getOperators();
+    std::vector<int>::iterator itVictim = std::find(op.begin(), op.end(), *vict);
+    if (itVictim != op.end())
+        op.erase(itVictim);
     (it).getWhiteList().erase(vict);
     if(command[3].empty())
         reason = server.getUser(server.get_fds()[id].fd).returnNickname();
