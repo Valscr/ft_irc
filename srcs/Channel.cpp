@@ -3,19 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 23:37:55 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/28 04:15:58 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Channel.hpp"
 
-Channel::Channel(std::string name, int fd) : _name(name)
+Channel::Channel(std::string name, int fd, std::string password) : _name(name)
 {
 	this->_operators.push_back(fd);
 	this->_invite_mode = false;
+	if (password == "")
+		this->_havePassword = false;
+	else
+	{
+		this->_havePassword = true;
+		this->_password = password;
+	}
 }
 
 Channel::~Channel() {}
@@ -41,6 +48,11 @@ void Channel::addBan(int fd)
 		this->_bans.push_back(fd);
 }
 
+void Channel::addUser(User *user)
+{
+	this->_users.push_back(user);
+}
+
 int Channel::find_channels(int fd)
 {
 	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
@@ -50,6 +62,14 @@ int Channel::find_channels(int fd)
 	if (ito != this->_operators.end())
 		return (1);
 	return (0);
+}
+
+bool Channel::isInvited(int fd)
+{
+	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
+	if (it != this->_white_list.end())
+		return (true);
+	return (false);
 }
 
 void Channel::removeWhiteList(int fd)
@@ -92,10 +112,35 @@ int Channel::alreadyExist(User *user)
 {
 	if(this->_users.empty())
 		return (0);
-	for (int i = 0; i < this->_users.size(); i++)
+	for (size_t i = 0; i < this->_users.size(); i++)
 	{
 		if (this->_users[i] == user)
 			return (1);
 	}
 	return (1);
+}
+
+bool Channel::getHavePassword()
+{
+	return (this->_havePassword);
+}
+
+std::string Channel::getPassword()
+{
+	return (this->_password);
+}
+
+bool Channel::getHasLimit()
+{
+	return (this->_hasLimit);
+}
+
+int Channel::getLimit()
+{
+	return (this->_limit);
+}
+
+bool Channel::getInviteMode()
+{
+	return (this->_invite_mode);
 }

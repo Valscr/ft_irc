@@ -32,7 +32,7 @@ class	Commands {
 			commandMap.insert(std::make_pair("NICK", &Commands::NICK));
 			commandMap.insert(std::make_pair("USER", &Commands::USER));
 			commandMap.insert(std::make_pair("PING", &Commands::PING));
-			/*commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));*/
+			//commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));
 			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));
 			return (commandMap);
 		}
@@ -44,6 +44,7 @@ class	Commands {
 		int		USER(std::vector<std::string> &command, int id, Server &server);
 		int		PING(std::vector<std::string> &command, int id, Server &server);
 		int		JOIN(std::vector<std::string> &command, int id, Server &server);
+		//int		QUIT(std::vector<std::string> &command, int id, Server &server);
 
 		/* Utils */
 		int validNickname(std::string nickname);

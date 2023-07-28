@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_exec.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/24 15:48:33 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/28 17:11:12 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ std::vector<std::string>	split_buffer(int fd, std::string str, Server *server) {
 	std::string			line;
 	std::vector<std::string>	res;
 
-    server->add_send(fd, str);
+    server->addmsg_rcv(fd, str);
 
     std::string input;
     std::istringstream r_iss(server->get_send()[fd]);
@@ -91,28 +91,34 @@ std::vector<std::string>	split_command(std::string str) {
 
 int exec_command(std::vector<std::string> command, Server &server, int id, std::map<std::string, Commands::fct> services)
 {
+    int fd = server.get_fds()[id].fd;
+    int ret = 1;
     std::map<std::string, Commands::fct>::iterator it = services.find(command[0]);
     if (it != services.end()) {
         Commands cmdObject;
         Commands::fct cmd = it->second;
-        return((cmdObject.*cmd)(command, id, server));
+        ret = (cmdObject.*cmd)(command, id, server);
     } else if (command[0] != "CAP"){
         msg_421();
+        return (ret);
     }
-    return (1);
+    try 
+    {
+        send(fd, server.get_send_fd(fd).c_str(), server.get_send_fd(fd).length(), 0);
+        std::cout << ANSI_GREEN << MAX_CLIENTS + 1 - id << " > " <<  server.get_send_fd(fd).c_str() << ANSI_RESET << std::endl;
+        server.erase_send(fd);
+    }
+    catch(const std::runtime_error& e)
+    {
+        return (ret);
+    }
+    return (ret);
 }
 
 int server_exec(Server &server)
 {
     char buffer[BUFFER_SIZE];
-    //bool password[MAX_CLIENTS + 1];
-    //bool welcome[MAX_CLIENTS + 1];
     bool run = true;
-    /*for (int j = 0; j <= MAX_CLIENTS; j++)
-    {
-        //password[j] = false;
-        welcome[j] = false;
-    }*/
     
     signal(SIGINT, handleSignal);
     while (run)

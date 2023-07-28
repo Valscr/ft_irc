@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/26 18:19:27 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/28 16:55:54 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ std::string  &Server::get_send_fd(int fd)
             return (it->second);
         }
     }
-     throw std::runtime_error("Socket non trouvé");
+    throw std::runtime_error("Socket non trouvé");
 }
 
 Commands *Server::getCommand()
@@ -118,20 +118,27 @@ Commands *Server::getCommand()
 }
 std::map<int, std::string> &Server::get_send()
 {
-    return (this->send_client);
+    return (this->rcv_client);
 }
 
 
 
-void  Server::add_send(int fd, std::string str)
+void  Server::addmsg_rcv(int fd, std::string str)
+{
+    try {
+		this->rcv_client.at(fd);
+	} catch (std::exception const &e) {
+		this->rcv_client.insert(std::make_pair(fd, ""));}
+    this->rcv_client[fd] = str;
+}
+
+void  Server::addmsg_send(int fd, std::string str)
 {
     try {
 		this->send_client.at(fd);
 	} catch (std::exception const &e) {
 		this->send_client.insert(std::make_pair(fd, ""));}
-    //peut etre pas ajouter mais remplacer plutot
-    //on risque de lire 2 fois les memes données peut etre sinon
-    this->send_client[fd] = str;
+    this->send_client[fd].append(str);
 }
 
 std::vector<User> Server::getUsersList()
@@ -263,9 +270,9 @@ bool Server::NicknameMatching(std::string nickname)
 /************************************************************/
 
 
-void Server::createChannel(std::string name, int fd)
+void Server::createChannel(std::string name, int fd, std::string password)
 {
-        Channel newChannel(name, fd);
+        Channel newChannel(name, fd, password);
         this->channels.push_back(newChannel);
 }
 
@@ -331,6 +338,6 @@ void Server::freeEverything()
         this->erase_fd(i);
     }
     this->users.clear();
-    this->send_client.clear();
+    this->rcv_client.clear();
     delete this->commands;
 }

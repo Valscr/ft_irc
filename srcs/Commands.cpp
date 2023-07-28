@@ -20,13 +20,13 @@ Commands::~Commands(void) { return; }
 /*                         COMMANDS METHODS                           */
 /*********************************************************************/
 
-int Commands::PASS(std::vector<std::string> &command, int id, Server &server)
+int Commands::PASS(std::vector<std::string> &command, int i, Server &server)
 {
-    int fd = server.get_fds()[id].fd;
+    int fd = server.get_fds()[i].fd;
     if (command.size() == 1)
     {
-        msg_421();
-        disconnect(id, server, false);
+        server.addmsg_send(fd, ERR_UNKNOWNCOMMAND(command[0]));
+        disconnect(i, server, false);
         return 0;
     }
     if (!server.getUser(fd).returnPassword() && (command[1] == server.get_password()))
@@ -36,13 +36,13 @@ int Commands::PASS(std::vector<std::string> &command, int id, Server &server)
     }
     else if(server.getUser(fd).returnPassword())
     {
-        msg_462();
+        server.addmsg_send(fd, ERR_ALREADYREGISTERED);
         return (1);
     }
     else
     {
-        msg_464();
-        disconnect(id, server, false);
+        server.addmsg_send(fd, ERR_PASSWDMISMATCH);
+        disconnect(i, server, false);
         return (0);
     }
 }
@@ -57,61 +57,69 @@ int Commands::validNickname(std::string nickname)
     }
     return (1);
 }
-int Commands::NICK(std::vector<std::string> &command, int id, Server &server)
+int Commands::NICK(std::vector<std::string> &command, int i, Server &server)
 {
-    int fd = server.get_fds()[id].fd;
+    int fd = server.get_fds()[i].fd;
     if (command[1].empty())
     {
-        msg_431();
-        disconnect(id, server, false);
+        server.addmsg_send(fd,ERR_NONICKNAMEGIVEN);
+        disconnect(i, server, false);
         return 0;
     }
     else if (!validNickname(command[1]))
     {
-        msg_432();
-        disconnect(id, server, false);
+        server.addmsg_send(fd,ERR_ERRONEUSNICKNAME(command[1]));
+        disconnect(i, server, false);
         return 0;
     }
     else if(server.NicknameMatching(command[1]))
     {
-        msg_433();
-        disconnect(id, server, false);
+        server.addmsg_send(fd, ERR_NICKNAMEISUSE(command[1]));
+        disconnect(i, server, false);
         return 0;
     }
     server.getUser(fd).setNickname(command[1]);
     server.getUser(fd).setHasNickname(true);
-    send(fd, msg_001(server.getUser(fd).returnNickname()).c_str(), msg_001(server.getUser(fd).returnNickname()).length(), 0);
-    std::cout << ANSI_GREEN << MAX_CLIENTS + 1 - id << " > " << msg_001(server.getUser(fd).returnNickname()).c_str() << ANSI_RESET << std::endl;
+    //send(fd, msg_001(server.getUser(fd).returnNickname()).c_str(), msg_001(server.getUser(fd).returnNickname()).length(), 0);
     return (1);
 }
 
-int Commands::USER(std::vector<std::string> &command, int id, Server &server)
+std::string ft_concatener(std::vector<std::string> command, size_t start, size_t end, std::string txt)
 {
-    int fd = server.get_fds()[id].fd;
+    for (size_t i = start; i < end; i++) {
+        if (!command[i].empty())
+        {
+            txt += " ";
+            txt += command[i];
+        }
+    }
+    return (txt);
+}
+int Commands::USER(std::vector<std::string> &command, int i, Server &server)
+{
+    int fd = server.get_fds()[i].fd;
+    int id = server.getUser(fd).returnId();
 
     if (command.size() < 5)
     {
-        msg_421();
-        disconnect(id, server, false);
+        
+        disconnect(i, server, false);
         return 0;
     }
     else if(server.getUser(fd).returnRegistered())
     {
-        msg_462();
+        server.addmsg_send(fd,ERR_ALREADYREGISTERED);
         return 1;
     }
     if (server.UserExist_fd(fd) && server.getUser(fd).returnHasNickname())
     {
         server.getUser(fd).setUsername(command[1]);
-        std::cout << "Username " << server.getUser(fd).returnUsername() << std::endl;
-        server.getUser(fd).setRealsname(command[2]);
-        std::cout << "Realsname " << server.getUser(fd).returnRealname() << std::endl;
-        server.getUser(fd).setHotsname(command[4]);
-        std::cout << "Hostname  " << server.getUser(fd).returnHostname() << std::endl;
+        server.getUser(fd).setHotsname(command[2]);
+        server.getUser(fd).setRealsname(ft_concatener(command, 5, command.size(), command[4].substr(1)));
         server.getUser(fd).setRegistered(true);
-        int new_id = server.getUser(fd).returnId();
-        std::cout << "Nickname  " << server.getUser(fd).returnNickname() << std::endl;
-        std::cout << "Client " << new_id << "[" << fd << "]" << " connected" << std::endl;
+        std::cout << "Client " << id << "[" << fd << "]" << " connected" << std::endl;
+        server.addmsg_send(fd,RPL_WELCOME(server.getUser(fd).returnNickname(),
+            server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname()));
         return (1);
     }
     else
@@ -121,26 +129,81 @@ int Commands::USER(std::vector<std::string> &command, int id, Server &server)
     }
 }
 
-int Commands::PING(std::vector<std::string> &command, int id, Server &server)
+int Commands::PING(std::vector<std::string> &command, int i, Server &server)
 {
-    int fd = server.get_fds()[id].fd;
+    int fd = server.get_fds()[i].fd;
     std::string msg = "PONG :" + command[1] + "\r\n";
-    send(fd, msg.c_str(), msg.length(), 0);
-    std::cout << ANSI_GREEN << server.getUser(server.get_fds()[id].fd).returnId() << " > " << msg.c_str() << ANSI_RESET << std::endl;
+    server.addmsg_send(fd, msg.c_str());
     return (1);
 }
 
-int Commands::JOIN(std::vector<std::string> &command, int id, Server &server)
+std::vector<std::string>	split_names(std::string str) {
+	std::vector<std::string>	res;
+
+    std::string input;
+    std::istringstream r_iss(str);
+    while (std::getline(r_iss, input, ',')) {
+        res.push_back(input);
+    }
+	return res;
+}
+
+int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
 {
-    int fd = server.get_fds()[id].fd;
+    std::vector<std::string> chanPasswords;
+    int fd = server.get_fds()[j].fd;
+    int id = server.getUser(j).returnId();
 	if (command.size() < 2)
     {
-		//send_to(ERR_NEEDMOREPARAMS(string("JOIN")));
-		return 0;
+        server.addmsg_send(fd,ERR_NEEDMOREPARAMS(command[0]));
+		return (1);
 	}
-    //verifier si la ligne commence par # ?
-	
-    return 0;
+
+    std::vector<std::string> chanNames = split_names(command[1]);
+    if (command.size() > 2)
+        chanPasswords = split_names(command[2]);
+    
+    for (size_t i = 0; i < chanNames.size(); i++)
+    {
+        if (!(chanNames[i][0] == '#') || (chanNames[i][0] == '&'))
+        {
+            server.addmsg_send(fd,ERR_BADCHANMASK(chanNames[i]));
+            continue ;
+        }
+        if (!server.find_channel(chanNames[i]))
+        {
+            if((command.size() > 2) && (chanPasswords.size() >= (i + 1)))
+                server.createChannel(chanNames[i], fd, chanPasswords[i]);
+            else
+                server.createChannel(chanNames[i], fd, "");
+        }
+        Channel chan = server.getChannel(chanNames[i]);
+        if (chan.getInviteMode())
+        {
+            if (!chan.isInvited(fd))
+            {
+                //ERR_INVITEONLYCHAN
+                continue;
+            }
+        }
+        //verifier si le chan necessite un mdp
+        if (!(chan.getHavePassword() || (chan.getPassword() == chanPasswords[i])))
+        {
+            server.addmsg_send(fd, ERR_BADCHANNELKEY(server.getUser(id).returnNickname(), chanNames[i]));
+            continue;
+        }
+        if (!chan.alreadyExist(&(server.getUser(fd))))
+        {
+            if (chan.getHasLimit() && (chan.getLimit() < int(chan.getUsers().size() + 1)))
+            {
+                server.addmsg_send(fd, ERR_CHANNELISFULL(server.getUser(id).returnNickname(), chanNames[i]));
+                continue;
+            }
+            chan.addUser(&(server.getUser(fd)));
+            //envoyer au client les infos !
+        }
+    }
+    return (1);
 }
 
 /***********************************************************************/

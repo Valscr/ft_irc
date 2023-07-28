@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/26 18:01:45 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/28 03:44:45 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ class Server
         std::vector<Channel> channels;
         std::vector<User> users;
         struct sockaddr_in serverAddress;
+        std::map<int, std::string> rcv_client;
         std::map<int, std::string> send_client;
         Commands *commands;
     
@@ -70,8 +71,9 @@ class Server
         std::map<int, std::string> &get_send();
         std::string get_name();
         User& getUserwithNickname(std::string name);
-        void  add_send(int fd, std::string str);
-        void    send_all(std::string msg);
+        void  addmsg_send(int fd, std::string str);
+        void  addmsg_rcv(int fd, std::string str);
+        void  send_all(std::string msg);
         /******************SETTERS****************/
 
         void set_Clientsocket(int clientsocket);
@@ -87,7 +89,7 @@ class Server
 
         /***************CHANNELS MANAGEMENT METHODS*****************/
 
-        void createChannel(std::string name, int fd);
+        void createChannel(std::string name, int fd, std::string password);
         int find_channel(std::string name);
 
         /**************autre***************************************/
