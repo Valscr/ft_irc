@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/27 14:50:00 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/28 11:49:54 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,13 +106,7 @@ int exec_command(std::vector<std::string> command, Server &server, int id, std::
 int server_exec(Server &server)
 {
     char buffer[BUFFER_SIZE];
-    //bool password[MAX_CLIENTS + 1];
-    //bool welcome[MAX_CLIENTS + 1];
-    /*for (int j = 0; j <= MAX_CLIENTS; j++)
-    {
-        //password[j] = false;
-        welcome[j] = false;
-    }*/
+
     run = true;
     signal(SIGINT, handleSignal);
     while (run)

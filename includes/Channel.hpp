@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/27 22:53:18 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/28 11:08:45 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ class Channel
         std::string         _topic;
         std::vector<int>    _white_list;
         std::vector<int>    _operators;
-        std::vector<int>    _bans;
         int                 _user_limit;
         bool                _topic_restriction;
         bool                _invite_mode;
@@ -36,15 +35,12 @@ class Channel
         ~Channel();
         void addWhiteList(int fd);
         void addOperator(int fd);
-        void addBan(int fd);
         void removeWhiteList(int fd);
         void removeOperator(int fd);
-        void removeBan(int fd);
         void setInviteMode(bool state);
         void setTopic(std::string topic);
         std::string getName();
         int find_user_channels(int fd);
-        int is_ban(int fd);
         int is_operator(int fd);
         int getInviteMode();
         void setTopicRestriction(bool state);
@@ -54,10 +50,10 @@ class Channel
         void setUserLimit(int limit);
         int getUserlimit();
         int count_user();
+        std::string getTopic();
 
         std::vector<int>& getWhiteList() {return (this->_white_list);};
         std::vector<int>& getOperators() {return (this->_operators);};
-        std::vector<int>& getBans() {return (this->_bans);};
 };
 
 #endif

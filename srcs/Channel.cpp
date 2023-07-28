@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/27 22:53:46 by valentin         ###   ########.fr       */
+/*   Updated: 2023/07/28 11:40:18 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,6 @@ void Channel::addOperator(int fd)
 		this->_operators.push_back(fd);
 }
 
-void Channel::addBan(int fd)
-{
-	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
-	if (it == this->_bans.end())
-		this->_bans.push_back(fd);
-}
-
 int Channel::find_user_channels(int fd)
 {
 	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
@@ -59,14 +52,6 @@ int Channel::find_user_channels(int fd)
 		return (1);
 	std::vector<int>::iterator ito = std::find(this->_operators.begin(), this->_operators.end(), fd);
 	if (ito != this->_operators.end())
-		return (1);
-	return (0);
-}
-
-int Channel::is_ban(int fd)
-{
-	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
-	if (it != this->_bans.end())
 		return (1);
 	return (0);
 }
@@ -93,13 +78,6 @@ void Channel::removeOperator(int fd)
 		this->_operators.erase(it);
 }
 
-void Channel::removeBan(int fd)
-{
-	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
-	if (it != this->_bans.end())
-		this->_bans.erase(it);
-}
-
 int Channel::count_user()
 {
 	return (this->_operators.size() + this->_white_list.size());
@@ -123,6 +101,11 @@ void Channel::setTopicRestriction(bool state)
 int Channel::getTopicMode()
 {
 	return (this->_topic_restriction);
+}
+
+std::string Channel::getTopic()
+{
+	return (this->_topic);
 }
 
 void Channel::setlimitMode(bool state)

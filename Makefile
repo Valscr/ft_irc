@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: skhali <skhali@student.42.fr>              +#+  +:+       +#+         #
+#    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/07 20:51:27 by valentin          #+#    #+#              #
-#    Updated: 2023/07/21 16:42:41 by skhali           ###   ########.fr        #
+#    Updated: 2023/07/28 00:50:07 by valentin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ SRCS_FILES = main.cpp \
              msg.cpp \
              server_exec.cpp \
              utils.cpp \
-             command.cpp
+             commands_bis.cpp
 SRCS = $(addprefix , $(SRCS_FILES))
 
 #******************************************************************************#

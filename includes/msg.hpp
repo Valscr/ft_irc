@@ -55,14 +55,24 @@
 
 //Message SERVER
 # define RPL_WELCOME(nick, user, host) ("001 " + std::string(nick) + " :Welcome to the Internet Relay Network " + std::string(nick) + "!" + std::string(user) + "@" + std::string(host) + "\r\n")
+# define RPL_TOPIC(nick, channel, topic) ("332 " + std::string(nick) + " " + std::string(channel) + " :" + std::string(topic) + "\r\n")
 # define RPL_NAMREPLY(nick, user, host, channel) ("353 " + std::string(nick) + "!" + std::string(user) + "@" + std::string(host) + " = " + std::string(channel) + " :")
+# define RPL_NAMREPLY_BIS(nick, channel, users) ("353 " + std::string(nick) +  " = #" + std::string(channel) + " :" + std::string(users) + "\r\n")
+# define RPL_ENDOFNAMES(nick, channel) ("366 " + std::string(nick) + " #" + std::string(channel) + " :End of NAMES list\r\n")
 
 //Message CHANNEL
 # define ERR_NOSUCHCHANNEL(channel) ("403 " + std::string(channel) + " :No such channel\r\n")
+# define ERR_CANNOTSENDTOCHAN(nick, chan) ("404 " + std::string(nick) + " " + std::string(chan) + " :Cannot send message to this channel\r\n")
 # define ERR_USERNOTINCHANNEL(nick, chan) ("441 " + std::string(nick) + " " + std::string(chan) + " :They aren't on that channel\r\n")
 # define ERR_NOTONCHANNEL(chan) ("442 " + std::string(chan) + " :You're not on that channel\r\n")
 # define ERR_BADCHANMASK(channel) ("476 " + std::string(channel) + " :Bad Channel Mask\r\n")
+# define ERR_CHANNELISFULL(nick, channel) ("471 " + std::string(nick) + " #" + std::string(channel) + " :Channel is full\r\n")
+# define ERR_INVITEONLYCHAN(nick, channel) ("473 " + std::string(nick) + " #" + std::string(channel) + " :\r\n")
 # define ERR_CHANOPRIVSNEEDED(chan) ("482 " + std::string(chan) + " :You're not channel operator\r\n")
+
 
 //Message COMMAND
 # define ERR_UNKNOWNCOMMAND(command) ("421 " + std::string(command) + " :Unknown command\r\n")
+
+//Messages USER
+# define RPL_AWAY(sender, nick) (" 301 " + std::string(sender) + " " + std::string(nick) + " :This user is disconnected.\r\n")
