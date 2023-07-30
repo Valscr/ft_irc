@@ -1,29 +1,23 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Channel.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-<<<<<<< HEAD
-/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/30 11:00:41 by kyacini          ###   ########.fr       */
-=======
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/26 19:44:34 by marvin           ###   ########.fr       */
->>>>>>> origin/sam
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
+#include <iostream>
+#include "Server.hpp"
 #include <vector>
+#include <list>
+#include <cstring>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <poll.h>
 #include <algorithm>
+#include <sstream>
+#include <cstdlib>
+#include <cstdio>
+#include <cerrno>
+#include <signal.h>
 #include "irc.hpp"
-
 class Channel
 {
     private:
@@ -33,28 +27,21 @@ class Channel
         std::string         _password;
         bool                _hasLimit;
         int                 _limit;
-        std::vector<User*>   _users;
+        std::vector<User*>  _users;
         std::vector<int>    _white_list;
         std::vector<int>    _operators;
-        std::vector<int>    _bans;
         bool                _invite_mode;
         std::string         _topic;
 
     public:
-<<<<<<< HEAD
 
         Channel(std::string name, int fd, std::string password);
-=======
-        Channel();
-        Channel(std::string name, int fd);
->>>>>>> origin/sam
+        Channel(){ return ;};
         ~Channel();
         void addWhiteList(int fd);
         void addOperator(int fd);
-        void addBan(int fd);
         void removeWhiteList(int fd);
         void removeOperator(int fd);
-        void removeBan(int fd);
         void setInviteMode(bool state);
         std::string getName();
         int find_channels(int fd);
@@ -65,7 +52,6 @@ class Channel
         bool isInvited(int fd);
         std::vector<int>& getWhiteList() {return (this->_white_list);};
         std::vector<int>& getOperators() {return (this->_operators);};
-        std::vector<int>& getBans() {return (this->_bans);};
         bool getHavePassword();
         std::string getPassword();
         bool getHasLimit();

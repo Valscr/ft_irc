@@ -1,32 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Channel.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-<<<<<<< HEAD
-/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/30 11:00:45 by kyacini          ###   ########.fr       */
-=======
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/26 19:45:19 by marvin           ###   ########.fr       */
->>>>>>> origin/sam
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/Channel.hpp"
 
-<<<<<<< HEAD
 Channel::Channel(std::string name, int fd, std::string password) : _name(name)
-=======
-Channel::Channel()
-{}
-
-Channel::Channel(std::string name, int fd) : _name(name)
->>>>>>> origin/sam
 {
 	this->_operators.push_back(fd);
 	this->_invite_mode = false;
@@ -55,12 +29,6 @@ void Channel::addOperator(int fd)
 		this->_operators.push_back(fd);
 }
 
-void Channel::addBan(int fd)
-{
-	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
-	if (it == this->_bans.end())
-		this->_bans.push_back(fd);
-}
 
 void Channel::addUser(User *user)
 {
@@ -98,13 +66,6 @@ void Channel::removeOperator(int fd)
 	std::vector<int>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), fd);
 	if (it != this->_operators.end())
 		this->_operators.erase(it);
-}
-
-void Channel::removeBan(int fd)
-{
-	std::vector<int>::iterator it = std::find(this->_bans.begin(), this->_bans.end(), fd);
-	if (it != this->_bans.end())
-		this->_bans.erase(it);
 }
 
 void Channel::setInviteMode(bool state)

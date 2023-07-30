@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: skhali <skhali@student.42.fr>              +#+  +:+       +#+         #
+#    By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/07 20:51:27 by valentin          #+#    #+#              #
-#    Updated: 2023/07/21 16:42:41 by skhali           ###   ########.fr        #
+#    Updated: 2023/07/30 20:15:05 by kyacini          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,14 +15,14 @@
 SRCS_DIR = srcs
 SRCS_FILES = main.cpp \
              User.cpp \
-             Commands.cpp \
              Channel.cpp \
              Server.cpp \
              irc.cpp \
              msg.cpp \
              server_exec.cpp \
              utils.cpp \
-             command.cpp
+             Commands.cpp \
+
 SRCS = $(addprefix , $(SRCS_FILES))
 
 #******************************************************************************#

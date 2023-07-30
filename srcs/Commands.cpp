@@ -227,8 +227,6 @@ std::map<std::string, fct> Commands::getServices()
 {
     return (this->services_list);
 }
-<<<<<<< HEAD
-=======
 
 /***********************************************************************/
 /*                          Sam's space                               */
@@ -323,7 +321,6 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
         reason = server.getUser(server.get_fds()[id].fd).returnNickname();
     else
         reason = command[3];
-    server.send_all(":" + server.getUser(server.get_fds()[id].fd).returnHostname() + " KICK " + command[1] + " " + command[2] + " :" + reason);
+    server.send_all(":" + server.getUser(server.get_fds()[id].fd).returnHostname() + " KICK " + command[1] + " " + command[2] + " :" + reason, it);
     return 1;
 }
->>>>>>> origin/sam
