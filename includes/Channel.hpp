@@ -58,6 +58,7 @@ class Channel
         int getLimit();
         bool getInviteMode();
         std::string getTopic();
+        std::string getListUsers();
 };
 
 #endif

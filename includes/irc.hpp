@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/28 15:59:28 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/07/31 00:28:56 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 #include "User.hpp"
 #include "Channel.hpp"
 #include <signal.h>
-#include "msg.h"
+#include "msg.hpp"
 
 #define MAX_CLIENTS 20
 #define SERVER_NAME "server-irc"

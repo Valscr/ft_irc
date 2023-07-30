@@ -154,7 +154,6 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
 {
     std::vector<std::string> chanPasswords;
     int fd = server.get_fds()[j].fd;
-    int id = server.getUser(j).returnId();
 	if (command.size() < 2)
     {
         server.addmsg_send(fd,ERR_NEEDMOREPARAMS(command[0]));
@@ -185,21 +184,21 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
             if (!chan.isInvited(fd))
             {
                 //ERR_INVITEONLYCHAN
-                server.addmsg_send(fd, ERR_INVITEONLYCHAN(server.getUser(id).returnNickname(), chanNames[i]));
+                server.addmsg_send(fd, ERR_INVITEONLYCHAN(server.getUser(fd).returnNickname(), chanNames[i]));
                 continue;
             }
         }
         //verifier si le chan necessite un mdp
-        if (!(chan.getHavePassword() || (chan.getPassword() == chanPasswords[i])))
+        if (chan.getHavePassword() && (chan.getPassword() != chanPasswords[i]))
         {
-            server.addmsg_send(fd, ERR_BADCHANNELKEY(server.getUser(id).returnNickname(), chanNames[i]));
+            server.addmsg_send(fd, ERR_BADCHANNELKEY(server.getUser(fd).returnNickname(), chanNames[i]));
             continue;
         }
         if (!chan.alreadyExist(&(server.getUser(fd))))
         {
             if (chan.getHasLimit() && (chan.getLimit() < int(chan.getUsers().size() + 1)))
             {
-                server.addmsg_send(fd, ERR_CHANNELISFULL(server.getUser(id).returnNickname(), chanNames[i]));
+                server.addmsg_send(fd, ERR_CHANNELISFULL(server.getUser(fd).returnNickname(), chanNames[i]));
                 continue;
             }
             chan.addUser(&(server.getUser(fd)));
@@ -213,7 +212,7 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
                 server.addmsg_send(fd, RPL_NOTOPIC(server.getUser(fd).returnNickname(), chanNames[i]));
             //A refaire
             server.addmsg_send(fd, RPL_NAMREPLY(server.getUser(fd).returnNickname(),
-                server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname(), chan.getName()));
+                server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname(), chan.getName(), chan.getListUsers()));
         }
     }
     return (1);

@@ -124,3 +124,32 @@ std::string Channel::getTopic()
 {
 	return (this->_topic);
 }
+template< typename T >
+bool isInVector(std::vector<T> list, T element) 
+{
+	int found = false;
+	typename std::vector<T>::iterator vict;
+    for (vict = list.begin(); vict != list.end(); ++vict)
+    {
+        if (*vict == element)
+        {
+            found = true;
+            break;
+        }
+    }
+	return (found);
+}
+
+std::string Channel::getListUsers()
+{
+	std::string txt;
+	for (size_t i = 0; i < this->_users.size(); i++)
+	{
+		if (isInVector(this->_operators, this->_users[i]->returnFd()))
+			txt += "@";
+		txt += this->_users[i]->returnNickname();
+		txt += " ";
+	}
+	std::cout << "liste de users " << txt << std::endl;
+	return (txt);
+}
