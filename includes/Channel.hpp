@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/28 15:06:27 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/07/30 11:00:41 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channel
         std::vector<int>    _operators;
         std::vector<int>    _bans;
         bool                _invite_mode;
+        std::string         _topic;
 
     public:
 
@@ -58,6 +59,7 @@ class Channel
         bool getHasLimit();
         int getLimit();
         bool getInviteMode();
+        std::string getTopic();
 };
 
 #endif

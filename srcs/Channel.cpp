@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/28 04:15:58 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/07/30 11:00:45 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,4 +143,9 @@ int Channel::getLimit()
 bool Channel::getInviteMode()
 {
 	return (this->_invite_mode);
+}
+
+std::string Channel::getTopic()
+{
+	return (this->_topic);
 }

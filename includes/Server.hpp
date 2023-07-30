@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:47:43 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/28 03:44:45 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/07/30 16:47:06 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ class Server
         User& getUserwithNickname(std::string name);
         void  addmsg_send(int fd, std::string str);
         void  addmsg_rcv(int fd, std::string str);
-        void  send_all(std::string msg);
+        void  send_all(std::string msg, Channel chan);
         /******************SETTERS****************/
 
         void set_Clientsocket(int clientsocket);

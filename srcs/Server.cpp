@@ -6,13 +6,14 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/28 16:55:54 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/07/30 16:49:08 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 #include "../includes/irc.hpp"
 #include "../includes/Commands.hpp"
+#include "../includes/Channel.hpp"
 
 /***********************************************************************/
 /*                   CONSTRUCTOR & DESTRUCTOR                         */
@@ -290,13 +291,13 @@ int Server::find_channel(std::string name)
     return (0);
 }
 
-void Server::send_all(std::string msg)
+void Server::send_all(std::string msg, Channel chan)
 {
-    for (size_t  i = 0; i < this->fds.size(); i++)
+    for (size_t  i = 0; i < chan.getUsers().size(); i++)
     {
-        if (this->getListensocket() == this->fds[i].fd)
+        if (this->getListensocket() ==  chan.getUsers()[i]->returnFd())
             continue ;
-        send(this->fds[i].fd, msg.c_str(), msg.length(), 0);
+        send(chan.getUsers()[i]->returnFd(), msg.c_str(), msg.length(), 0);
     }
 }
 /**************************************************************/
