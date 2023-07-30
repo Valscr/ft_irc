@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< HEAD
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
 /*   Updated: 2023/07/30 16:49:08 by kyacini          ###   ########.fr       */
+=======
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/07 20:49:25 by valentin          #+#    #+#             */
+/*   Updated: 2023/07/26 19:31:22 by marvin           ###   ########.fr       */
+>>>>>>> origin/sam
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,8 +277,12 @@ bool Server::NicknameMatching(std::string nickname)
 /*              CHANNEL realted functions                    */
 /************************************************************/
 
+<<<<<<< HEAD
 
 void Server::createChannel(std::string name, int fd, std::string password)
+=======
+void Server::createChannel(std::string name, int fd)
+>>>>>>> origin/sam
 {
         Channel newChannel(name, fd, password);
         this->channels.push_back(newChannel);
@@ -303,6 +314,16 @@ void Server::send_all(std::string msg, Channel chan)
 /**************************************************************/
 /*                            Utils                          */
 /************************************************************/
+
+void Server::send_all(std::string msg)
+{
+    for (size_t  i = 0; i < this->fds.size(); i++)
+    {
+        if (this->getListensocket() == this->fds[i].fd)
+            continue ;
+        send(this->fds[i].fd, msg.c_str(), msg.length(), 0);
+    }
+}
 
 void Server::close_fd(int i)
 {

@@ -39,12 +39,20 @@ class	Commands {
 		std::map<std::string, fct> getServices();
 
 		/* Commands methods*/
+<<<<<<< HEAD
 		int		PASS(std::vector<std::string> &command, int id, Server &server);
 		int		NICK(std::vector<std::string> &command, int id, Server &server);
 		int		USER(std::vector<std::string> &command, int id, Server &server);
 		int		PING(std::vector<std::string> &command, int id, Server &server);
 		int		JOIN(std::vector<std::string> &command, int id, Server &server);
 		//int		QUIT(std::vector<std::string> &command, int id, Server &server);
+=======
+		int		PASS(std::vector<std::string> &client, int id, Server &server);
+		int		NICK(std::vector<std::string> &client, int id, Server &server);
+		int		USER(std::vector<std::string> &client, int id, Server &server);
+		int		PING(std::vector<std::string> &client, int id, Server &server);
+		int		KICK(std::vector<std::string> &client, int id, Server &server);
+>>>>>>> origin/sam
 
 		/* Utils */
 		int validNickname(std::string nickname);

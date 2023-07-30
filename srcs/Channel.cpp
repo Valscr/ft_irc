@@ -3,16 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< HEAD
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
 /*   Updated: 2023/07/30 11:00:45 by kyacini          ###   ########.fr       */
+=======
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/07 20:48:05 by valentin          #+#    #+#             */
+/*   Updated: 2023/07/26 19:45:19 by marvin           ###   ########.fr       */
+>>>>>>> origin/sam
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Channel.hpp"
 
+<<<<<<< HEAD
 Channel::Channel(std::string name, int fd, std::string password) : _name(name)
+=======
+Channel::Channel()
+{}
+
+Channel::Channel(std::string name, int fd) : _name(name)
+>>>>>>> origin/sam
 {
 	this->_operators.push_back(fd);
 	this->_invite_mode = false;

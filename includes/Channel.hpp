@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< HEAD
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
 /*   Updated: 2023/07/30 11:00:41 by kyacini          ###   ########.fr       */
+=======
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/07 20:48:10 by valentin          #+#    #+#             */
+/*   Updated: 2023/07/26 19:44:34 by marvin           ###   ########.fr       */
+>>>>>>> origin/sam
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +41,13 @@ class Channel
         std::string         _topic;
 
     public:
+<<<<<<< HEAD
 
         Channel(std::string name, int fd, std::string password);
+=======
+        Channel();
+        Channel(std::string name, int fd);
+>>>>>>> origin/sam
         ~Channel();
         void addWhiteList(int fd);
         void addOperator(int fd);
