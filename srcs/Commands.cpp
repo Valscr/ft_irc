@@ -82,7 +82,6 @@ int Commands::NICK(std::vector<std::string> &command, int i, Server &server)
     }
     server.getUser(fd).setNickname(command[1]);
     server.getUser(fd).setHasNickname(true);
-    //send(fd, msg_001(server.getUser(fd).returnNickname()).c_str(), msg_001(server.getUser(fd).returnNickname()).length(), 0);
     return (1);
 }
 
@@ -152,14 +151,16 @@ std::vector<std::string>	split_names(std::string str) {
 
 int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
 {
+    static int tmp = 1;
     std::vector<std::string> chanPasswords;
+    Channel *chan = NULL;
     int fd = server.get_fds()[j].fd;
 	if (command.size() < 2)
     {
         server.addmsg_send(fd,ERR_NEEDMOREPARAMS(command[0]));
 		return (1);
 	}
-
+    //verifier pour JOIN #
     std::vector<std::string> chanNames = split_names(command[1]);
     if (command.size() > 2)
         chanPasswords = split_names(command[2]);
@@ -174,14 +175,18 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
         if (!server.find_channel(chanNames[i]))
         {
             if((command.size() > 2) && (chanPasswords.size() >= (i + 1)))
-                server.createChannel(chanNames[i], fd, chanPasswords[i]);
+                chan = server.createChannel(chanNames[i], fd, chanPasswords[i], tmp);
             else
-                server.createChannel(chanNames[i], fd, "");
+                chan = server.createChannel(chanNames[i], fd, "", tmp);
+            (*chan).addOperator(fd);
         }
-        Channel chan = server.getChannel(chanNames[i]);
-        if (chan.getInviteMode())
+        else
         {
-            if (!chan.isInvited(fd))
+            chan = server.getChannel(chanNames[i]);
+        }
+        if ((*chan).getInviteMode())
+        {
+            if (!(*chan).isInvited(fd))
             {
                 //ERR_INVITEONLYCHAN
                 server.addmsg_send(fd, ERR_INVITEONLYCHAN(server.getUser(fd).returnNickname(), chanNames[i]));
@@ -189,32 +194,47 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
             }
         }
         //verifier si le chan necessite un mdp
-        if (chan.getHavePassword() && (chan.getPassword() != chanPasswords[i]))
+        //verifier les espaces dans le nom du channel
+        if ((*chan).getHavePassword() && ((*chan).getPassword() != chanPasswords[i]))
         {
             server.addmsg_send(fd, ERR_BADCHANNELKEY(server.getUser(fd).returnNickname(), chanNames[i]));
             continue;
         }
-        if (!chan.alreadyExist(&(server.getUser(fd))))
+        if (!(*chan).alreadyExist(fd))
         {
-            if (chan.getHasLimit() && (chan.getLimit() < int(chan.getUsers().size() + 1)))
+            if ((*chan).getHasLimit() && ((*chan).getLimit() < int((*chan).getWhiteList().size() + 1)))
             {
                 server.addmsg_send(fd, ERR_CHANNELISFULL(server.getUser(fd).returnNickname(), chanNames[i]));
                 continue;
             }
-            chan.addUser(&(server.getUser(fd)));
-            //JOIN message
-            server.addmsg_send(fd, (":" + server.getUser(fd).returnNickname() + "!"
-                + server.getUser(fd).returnUsername() + "@" + server.getUser(fd).returnHostname()  + " JOIN " + chanNames[i] + "\r\n"));
-            //MODE message with the current channel's modes;
-            if (chan.getTopic().empty())
-                server.addmsg_send(fd, RPL_TOPIC(server.getUser(fd).returnNickname(), chanNames[i], chan.getTopic()));
-            else
-                server.addmsg_send(fd, RPL_NOTOPIC(server.getUser(fd).returnNickname(), chanNames[i]));
-            //A refaire
-            server.addmsg_send(fd, RPL_NAMREPLY(server.getUser(fd).returnNickname(),
-                server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname(), chan.getName(), chan.getListUsers()));
         }
+        (*chan).addUser(fd);
+         server.addmsg_send(fd, (":" + server.getUser(fd).returnNickname() + "!"
+             + server.getUser(fd).returnUsername() + "@" + server.getUser(fd).returnHostname()  + " JOIN " + chanNames[i] + "\r\n"));
+        //MODE message with the current channel's modes;
+        if ((*chan).getTopic().empty())
+            server.addmsg_send(fd, RPL_TOPIC(server.getUser(fd).returnNickname(), chanNames[i], (*chan).getTopic()));
+        else
+            server.addmsg_send(fd, RPL_NOTOPIC(server.getUser(fd).returnNickname(), chanNames[i]));
+        server.addmsg_send(fd, RPL_NAMREPLY(server.getUser(fd).returnNickname(),
+            server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname(), (*chan).getName(), (*chan).getListUsers(server)));
     }
+    std::cout << " ID du chan " << (*chan).getID() << std::endl;
+    std::cout << "Taille de la liste : " << (*chan).getWhiteList().size() << std::endl;
+    for (std::vector<int>::iterator it = (*chan).getWhiteList().begin(); it != (*chan).getWhiteList().end(); ++it) {
+        std::cout << "White list adress " << &(*it) << std::endl;
+        std::cout << "White list " << *it << std::endl;
+    }
+    /*for (size_t i = 0; i < chan.getWhiteList().size(); i++)
+    {
+        std::cout << "White list adress " << &(chan.getWhiteList()[i]) << std::endl;
+        std::cout << "White list " << chan.getWhiteList()[i] << std::endl;
+    }*/
+        for (size_t i = 0; i < (*chan).getOperators().size(); i++)
+    {
+        std::cout << "Operators list " << (*chan).getOperators()[i] << std::endl;
+    }
+    tmp++;
     return (1);
 }
 
@@ -233,58 +253,66 @@ std::map<std::string, fct> Commands::getServices()
 
 int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
 {
-    int id_client = server.getUser(server.get_fds()[id].fd).returnId();
+    int id_client = server.get_fds()[id].fd;
     std::vector<int>::iterator vict;
     std::string reason;
-    Channel it;
+    Channel *it;
     int id_victim;
     bool found = false;
 
     if(command[1].empty())
     {
-        send(server.get_fds()[id].fd, ERR_NOSUCHCHANNEL("Empty name").c_str(), ERR_NOSUCHCHANNEL("Empty name").length(), 0);
+        std::cout << "je suis present" << std::endl;
+        server.addmsg_send(server.get_fds()[id].fd, ERR_NOSUCHCHANNEL("Empty name").c_str());
         return 1;
     }
     try
     {
+        std::cout << "je suis là" << std::endl;
        it = server.getChannel(command[1]);
     }
     catch(const std::exception& e)
     {
-        send(server.get_fds()[id].fd, ERR_NOSUCHCHANNEL(command[1]).c_str(), ERR_NOSUCHCHANNEL(command[1]).length(), 0);
+        std::cout << "je suis ici" << std::endl;
+        server.addmsg_send(server.get_fds()[id].fd, ERR_NOSUCHCHANNEL(command[1]).c_str());
         return 1;
     }
     
     if(command[2].empty())
     {
-        send(server.get_fds()[id].fd, ERR_NOSUCHNICK("empty nickname").c_str(), ERR_NOSUCHNICK("empty nickname").length(), 0);
+        std::cout << "je suis ailleurs" << std::endl;
+        server.addmsg_send(server.get_fds()[id].fd, ERR_NOSUCHNICK("empty nickname").c_str());
         return 1;
     }
     try
     {
-        id_victim = server.getUserwithNickname(command[2]).returnId();
+        std::cout << "je suis partout" << std::endl;
+        id_victim = server.getUserwithNickname(command[2]).returnFd();
     }
     catch(const std::exception& e)
     {
-        send(server.get_fds()[id].fd, ERR_NOSUCHNICK(command[2]).c_str(), ERR_NOSUCHNICK(command[2]).length(), 0);
+        std::cout << "je suis invisible" << std::endl;
+        server.addmsg_send(server.get_fds()[id].fd, ERR_NOSUCHNICK(command[2]).c_str());
         return 1;
     }
     found = false;
-    for (vict = (it).getWhiteList().begin(); vict != (it).getWhiteList().end(); ++vict)
+    for (vict = (*it).getWhiteList().begin(); vict != (*it).getWhiteList().end(); ++vict)
     {
         if (*vict == id_victim)
         {
+            std::cout << "j'existe" << std::endl;
             found = true;
             break;
         }
     }
+    std::cout << " *vict et id_victim :" << *vict << " " << id_victim << std::endl;
+    std::cout << " id_client :" << id_client << std::endl;
     if (!found)
     {
-        send(server.get_fds()[id].fd, ERR_USERNOTINCHANNEL(command[2], command[1]).c_str(), ERR_USERNOTINCHANNEL(command[2], command[1]).length(), 0);
-        return 1;
+        server.addmsg_send(server.get_fds()[id].fd, ERR_USERNOTINCHANNEL(command[2], command[1]).c_str());
     }
     found = false;
-    for (std::vector<int>::iterator go = (it).getWhiteList().begin(); go != (it).getWhiteList().end(); ++go)
+    for (std::vector<int>::iterator go = (*it).getWhiteList().begin(); go != (*it).getWhiteList().end(); ++go)
     {
         if (*go == id_client)
         {
@@ -294,11 +322,11 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
     }
     if (!found)
     {
-        send(server.get_fds()[id].fd, ERR_NOTONCHANNEL(command[1]).c_str(), ERR_NOTONCHANNEL(command[1]).length(), 0);
-        return 1;
+        server.addmsg_send(server.get_fds()[id].fd, ERR_NOTONCHANNEL(command[1]).c_str());
+        return (1);
     }
     found = false;
-    for (std::vector<int>::iterator go = (it).getOperators().begin(); go != (it).getOperators().end(); ++go)
+    for (std::vector<int>::iterator go = (*it).getOperators().begin(); go != (*it).getOperators().end(); ++go)
     {
         if (*go == id_client)
         {
@@ -308,18 +336,22 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
     }
     if (!found)
     {
-        send(server.get_fds()[id].fd, ERR_CHANOPRIVSNEEDED(command[1]).c_str(), ERR_CHANOPRIVSNEEDED(command[1]).length(), 0);
-        return 1;
+        server.addmsg_send(server.get_fds()[id].fd, ERR_CHANOPRIVSNEEDED(command[1]).c_str());
+        return (1);
     }
-    std::vector<int> op = (it).getOperators();
+    std::vector<int> op = (*it).getOperators();
     std::vector<int>::iterator itVictim = std::find(op.begin(), op.end(), *vict);
     if (itVictim != op.end())
         op.erase(itVictim);
-    (it).getWhiteList().erase(vict);
-    if(command[3].empty())
-        reason = server.getUser(server.get_fds()[id].fd).returnNickname();
+    (*it).getWhiteList().erase(vict);
+    if((command.size() < 5) )
+    {
+        reason = server.getUser(id_client).returnNickname();
+        std::cout << "empty reason : " << reason << std::endl;
+    }
     else
-        reason = command[3];
-    server.send_all(":" + server.getUser(server.get_fds()[id].fd).returnHostname() + " KICK " + command[1] + " " + command[2] + " :" + reason, it);
-    return 1;
+        reason = ft_concatener(command, 4, 5, command[3].substr(1));
+    std::cout << "reason : " << reason << std::endl;
+    server.send_all(":" + server.getUser(id_client).returnHostname() + " KICK " + command[1] + " " + command[2] + " :" + reason, *it, id_client);
+    return (1);
 }

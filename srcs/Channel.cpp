@@ -1,8 +1,9 @@
 #include "../includes/Channel.hpp"
 
-Channel::Channel(std::string name, int fd, std::string password) : _name(name)
+Channel::Channel(std::string name, int fd, std::string password, int i) : _name(name)
 {
-	this->_operators.push_back(fd);
+	//this->_operators.push_back(fd);
+	(void)fd;
 	this->_invite_mode = false;
 	if (password == "")
 		this->_havePassword = false;
@@ -11,16 +12,11 @@ Channel::Channel(std::string name, int fd, std::string password) : _name(name)
 		this->_havePassword = true;
 		this->_password = password;
 	}
+	this->_id = i;
 }
 
 Channel::~Channel() {}
 
-void Channel::addWhiteList(int fd)
-{
-	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
-	if (it == this->_white_list.end())
-		this->_white_list.push_back(fd);
-}
 
 void Channel::addOperator(int fd)
 {
@@ -30,15 +26,15 @@ void Channel::addOperator(int fd)
 }
 
 
-void Channel::addUser(User *user)
+void Channel::addUser(int fd)
 {
-	this->_users.push_back(user);
+	this->_users.push_back(fd);
 }
 
 int Channel::find_channels(int fd)
 {
-	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
-	if (it != this->_white_list.end())
+	std::vector<int>::iterator it = std::find(this->_users.begin(), this->_users.end(), fd);
+	if (it != this->_users.end())
 		return (1);
 	std::vector<int>::iterator ito = std::find(this->_operators.begin(), this->_operators.end(), fd);
 	if (ito != this->_operators.end())
@@ -48,17 +44,17 @@ int Channel::find_channels(int fd)
 
 bool Channel::isInvited(int fd)
 {
-	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
-	if (it != this->_white_list.end())
+	std::vector<int>::iterator it = std::find(this->_users.begin(), this->_users.end(), fd);
+	if (it != this->_users.end())
 		return (true);
 	return (false);
 }
 
-void Channel::removeWhiteList(int fd)
+/*void Channel::removeWhiteList(int fd)
 {
-	std::vector<int>::iterator it = std::find(this->_white_list.begin(), this->_white_list.end(), fd);
-	if (it != this->_white_list.end())
-		this->_white_list.erase(it);
+	std::vector<int*>::iterator it = std::find(this->_users.begin(), this->_users.end(), fd);
+	if (it != this->_users.end())
+		this->_users.erase(it);
 }
 
 void Channel::removeOperator(int fd)
@@ -66,16 +62,11 @@ void Channel::removeOperator(int fd)
 	std::vector<int>::iterator it = std::find(this->_operators.begin(), this->_operators.end(), fd);
 	if (it != this->_operators.end())
 		this->_operators.erase(it);
-}
+}*/
 
 void Channel::setInviteMode(bool state)
 {
 	this->_invite_mode = state;
-}
-
-std::vector<User*> Channel::getUsers()
-{
-	return (this->_users);
 }
 
 std::string Channel::getName()
@@ -83,15 +74,19 @@ std::string Channel::getName()
     return (this->_name);
 }
 
-int Channel::alreadyExist(User *user)
+int Channel::alreadyExist(int fd)
 {
 	if(this->_users.empty())
 		return (0);
-	for (size_t i = 0; i < this->_users.size(); i++)
+	for (std::vector<int>::iterator it = this->_users.begin(); it != this->_users.end(); ++it) {
+		if (*it == fd)
+			return 1;
+    }
+	/*for (size_t i = 0; i < this->_users.size(); i++)
 	{
-		if (this->_users[i] == user)
+		if (this->_users[i] == fd)
 			return (1);
-	}
+	}*/
 	return (1);
 }
 
@@ -140,16 +135,22 @@ bool isInVector(std::vector<T> list, T element)
 	return (found);
 }
 
-std::string Channel::getListUsers()
+std::string Channel::getListUsers(Server server)
 {
 	std::string txt;
-	for (size_t i = 0; i < this->_users.size(); i++)
-	{
-		if (isInVector(this->_operators, this->_users[i]->returnFd()))
+	for (std::vector<int>::iterator it = this->_users.begin(); it != this->_users.end(); ++it) {
+		if (isInVector(this->_operators, *it))
 			txt += "@";
-		txt += this->_users[i]->returnNickname();
+		txt += server.getUser(*it).returnNickname();
 		txt += " ";
-	}
+    }
+	/*for (size_t i = 0; i < this->_users.size(); i++)
+	{
+		if (isInVector(this->_operators, this->_users[i]))
+			txt += "@";
+		txt += server.getUser(this->_users[i]).returnNickname();
+		txt += " ";
+	}*/
 	std::cout << "liste de users " << txt << std::endl;
 	return (txt);
 }

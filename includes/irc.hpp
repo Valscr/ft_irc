@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/31 00:28:56 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:57:09 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void msg_433();
 std::string msg_353(Server &server, std::string channel);
 int is_port(char *str);
 void privmsg_funct(std::string buffer, Server &server, int fd);
-void send_whitelist(Server &server, int fd, std::string channel, std::string buffer);
 
 
 #endif

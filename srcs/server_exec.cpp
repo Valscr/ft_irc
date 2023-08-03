@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/28 17:11:12 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/08/03 03:28:44 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void new_user(Server &server)
             throw std::runtime_error("configuration socket in non-blocking mode");
         server.set_fds_i_fd();
         server.createUser("", id, server.get_fds().back().fd);
-        std::cout << nb_fds << std::endl;
+        //std::cout << nb_fds << std::endl;
         int fd = server.getUsersList()[nb_fds - 1].returnFd();
 		std::cout << "Client " << id << "[" << fd << "]" << " created" << std::endl;
     }
@@ -98,11 +98,32 @@ int exec_command(std::vector<std::string> command, Server &server, int id, std::
         Commands cmdObject;
         Commands::fct cmd = it->second;
         ret = (cmdObject.*cmd)(command, id, server);
+        if (!server.getUsersList().empty())
+        {
+            std::cout << "nickname " << server.getUser(fd).returnNickname() << std::endl;
+            std::cout << "username " << server.getUser(fd).returnUsername() << std::endl;
+            std::cout << "hostname " << server.getUser(fd).returnHostname() << std::endl;
+            std::cout << "realname " << server.getUser(fd).returnRealname() << std::endl;
+        }
+        if (!server.getChannels().empty())
+        {
+            for (size_t i = 0; i < server.getChannels().size(); i++)
+            {
+                Channel *chan = server.getChannels()[i];
+                std::cout << "Nom : " << (*chan).getName() << std::endl;
+                std::cout << "Id : " << (*chan).getID() << std::endl;
+                std::cout << "White list : " << std::endl;
+                for (std::vector<int>::iterator it = (*chan).getWhiteList().begin(); it != (*chan).getWhiteList().end(); ++it)
+                {
+		            std::cout << "fd : " << *it << std::endl;
+                }
+            }
+        }
     } else if (command[0] != "CAP"){
         msg_421();
         return (ret);
     }
-    try 
+    try
     {
         send(fd, server.get_send_fd(fd).c_str(), server.get_send_fd(fd).length(), 0);
         std::cout << ANSI_GREEN << MAX_CLIENTS + 1 - id << " > " <<  server.get_send_fd(fd).c_str() << ANSI_RESET << std::endl;

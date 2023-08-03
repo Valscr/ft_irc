@@ -50,7 +50,7 @@
 # define ERR_PASSWDMISMATCH "464 :Password incorrect\r\n"
 
 //Message KILL
-# define ERR_NOSUCHNICK(invitenick) ("401 " + std::string(invitenick) + " :No such nick/channel\r\n")
+# define ERR_NOSUCHNICK(invitenick) ("401 " + std::string(invitenick) + " :No such nick\r\n")
 # define ERR_CANTKILLSERVER "483 :Servers can't be killed\r\n"
 
 //Message SERVER

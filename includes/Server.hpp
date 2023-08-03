@@ -32,7 +32,7 @@ class Server
         
         
         std::string password;
-        std::vector<Channel> channels;
+        std::vector<Channel*> channels;
         std::vector<User> users;
         struct sockaddr_in serverAddress;
         std::map<int, std::string> rcv_client;
@@ -49,8 +49,9 @@ class Server
         /****************GETTERS***************/
 
         std::vector<User> getUsersList();
-        Channel& getChannel(std::string name);
+        Channel *getChannel(std::string name);
         std::vector<pollfd> &get_fds();
+        std::vector<Channel*> getChannels(){ return channels;};
         int getListensocket();
         int getClientsocket();
         Commands* getCommand();
@@ -62,7 +63,8 @@ class Server
         User& getUserwithNickname(std::string name);
         void  addmsg_send(int fd, std::string str);
         void  addmsg_rcv(int fd, std::string str);
-        void  send_all(std::string msg, Channel chan);
+        void  send_all(std::string msg, Channel chan, int fd_client_actuel);
+
         /******************SETTERS****************/
 
         void set_Clientsocket(int clientsocket);
@@ -78,10 +80,11 @@ class Server
 
         /***************CHANNELS MANAGEMENT METHODS*****************/
 
-        void createChannel(std::string name, int fd, std::string password);
+        Channel *createChannel(std::string name, int fd, std::string password, int id);
         int find_channel(std::string name);
 
         /**************autre***************************************/
+        
         void close_fd(int i);
         void erase_send(int fd);
         void erase_fd(int i);

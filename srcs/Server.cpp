@@ -159,11 +159,11 @@ User& Server::getUserwithNickname(std::string name)
     throw std::runtime_error("getUserwithNickname :Utilisateur non trouvé");
 }
 
-Channel& Server::getChannel(std::string name)
+Channel* Server::getChannel(std::string name)
 {
-    for (size_t j = 0; j <= this->channels.size(); j++)
+    for (size_t j = 0; j < this->channels.size(); j++)
     {
-        if (this->channels[j].getName() == name)
+        if ((*(this->channels[j])).getName() == name)
         {
             return this->channels[j];
         }
@@ -192,13 +192,14 @@ void Server::createUser(std::string nickname, int id, int fd)
             }
         }     
     }
-    User newUser(nickname, fd, id);
-    this->users.push_back(newUser);
+    //maybe ici
+    User *newUser = new User(nickname, fd, id);
+    this->users.push_back(*newUser);
 }
 
 int Server::UserExist(std::string name)
 {
-    for (size_t j = 0; j <= this->users.size(); j++)
+    for (size_t j = 0; j < this->users.size(); j++)
     {
         if (this->users[j].returnNickname() == name)
         {
@@ -211,7 +212,7 @@ int Server::UserExist(std::string name)
 
 int Server::UserExist_fd(int fd)
 {
-    for (size_t j = 0; j <= this->users.size(); j++)
+    for (size_t j = 0; j < this->users.size(); j++)
     {
         if (this->users[j].returnFd() == fd)
         {
@@ -258,19 +259,20 @@ bool Server::NicknameMatching(std::string nickname)
 /*              CHANNEL realted functions                    */
 /************************************************************/
 
-void Server::createChannel(std::string name, int fd, std::string password)
+Channel *Server::createChannel(std::string name, int fd, std::string password, int id)
 {
-        Channel newChannel(name, fd, password);
+        Channel *newChannel= new Channel(name, fd, password, id);
         this->channels.push_back(newChannel);
+        return (newChannel);
 }
 
 int Server::find_channel(std::string name)
 {
     if (this->channels.empty())
         return (0);
-    for (size_t j = 0; j <= this->channels.size(); j++)
+    for (size_t j = 0; j < this->channels.size(); j++)
     {
-        if (this->channels[j].getName() == name)
+        if ((*(this->channels[j])).getName() == name)
         {
             return (1);
         }
@@ -278,14 +280,21 @@ int Server::find_channel(std::string name)
     return (0);
 }
 
-void Server::send_all(std::string msg, Channel chan)
+void Server::send_all(std::string msg, Channel chan, int fd_client_actuel)
 {
-    for (size_t  i = 0; i < chan.getUsers().size(); i++)
-    {
-        if (this->getListensocket() ==  chan.getUsers()[i]->returnFd())
+    for (std::vector<int>::iterator it = chan.getWhiteList().begin(); it != chan.getWhiteList().end(); ++it) {
+        if (*it == fd_client_actuel)
+            addmsg_send(*it, msg.c_str());
+        if (this->getListensocket() ==  *it)
             continue ;
-        send(chan.getUsers()[i]->returnFd(), msg.c_str(), msg.length(), 0);
+        send(*it, msg.c_str(), msg.length(), 0);
     }
+    /*for (size_t  i = 0; i < chan.getWhiteList().size(); i++)
+    {
+        if (this->getListensocket() ==  chan.getWhiteList()[i])
+            continue ;
+        send(chan.getWhiteList()[i], msg.c_str(), msg.length(), 0);
+    }*/
 }
 /**************************************************************/
 /*                            Utils                          */

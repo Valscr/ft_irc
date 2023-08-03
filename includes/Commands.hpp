@@ -32,7 +32,7 @@ class	Commands {
 			commandMap.insert(std::make_pair("NICK", &Commands::NICK));
 			commandMap.insert(std::make_pair("USER", &Commands::USER));
 			commandMap.insert(std::make_pair("PING", &Commands::PING));
-			//commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));
+			commandMap.insert(std::make_pair("KICK", &Commands::KICK));
 			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));
 			return (commandMap);
 		}

@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 02:25:47 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/28 16:02:03 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/07/31 20:31:55 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,6 @@ std::string find_previous_word(int i, std::string str)
     while (j >= 0 && str[j] != '\r' && str[j] != ' ' && str[j] != '\n')
         j--;
     return str.substr(j + 1, (i - 1) - j);
-}
-
-void send_whitelist(Server &server, int fd, std::string channel, std::string buffer)
-{
-    for (std::vector<int>::iterator it = server.getChannel(channel).getOperators().begin(); it != server.getChannel(channel).getOperators().end(); ++it)
-    {
-        if (fd != *it)
-        {
-            server.get_send_fd(*it).append(buffer);
-        }
-    }
-    for (std::vector<int>::iterator it = server.getChannel(channel).getWhiteList().begin(); it != server.getChannel(channel).getWhiteList().end(); ++it)
-    {
-        if (fd != *it)
-        {
-            server.get_send_fd(*it).append(buffer);
-        }
-    }
 }
 
 void send_function(Server &server, std::vector<pollfd> fds)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   msg.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 14:23:00 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 21:16:50 by skhali           ###   ########.fr       */
+/*   Updated: 2023/07/31 20:32:44 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,20 +44,4 @@ void msg_432()
 void msg_433()
 {
     std::cout << ":" << std::string(SERVER_NAME) << "433 :Nickname already in use\r\n" << std::endl;
-}
-std::string msg_353(Server &server, std::string channel)
-{
-    std::string str = "";
-    for (std::vector<int>::iterator it = server.getChannel(channel).getOperators().begin(); it != server.getChannel(channel).getOperators().end(); ++it)
-    {
-        str.append("@");
-        str.append(server.getUser(*it).returnNickname());
-        str.append(" ");
-    }
-    for (std::vector<int>::iterator it = server.getChannel(channel).getWhiteList().begin(); it != server.getChannel(channel).getWhiteList().end(); ++it)
-    {
-        str.append(server.getUser(*it).returnNickname());
-        str.append(" ");
-    }
-    return (str);
 }
