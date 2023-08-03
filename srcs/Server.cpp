@@ -283,8 +283,6 @@ int Server::find_channel(std::string name)
 void Server::send_all(std::string msg, Channel chan, int fd_client_actuel)
 {
     for (std::vector<int>::iterator it = chan.getWhiteList().begin(); it != chan.getWhiteList().end(); ++it) {
-        if (*it == fd_client_actuel)
-            addmsg_send(*it, msg.c_str());
         if (this->getListensocket() ==  *it)
             continue ;
         send(*it, msg.c_str(), msg.length(), 0);

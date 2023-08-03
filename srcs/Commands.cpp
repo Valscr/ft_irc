@@ -352,6 +352,8 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
     else
         reason = ft_concatener(command, 4, 5, command[3].substr(1));
     std::cout << "reason : " << reason << std::endl;
-    server.send_all(":" + server.getUser(id_client).returnHostname() + " KICK " + command[1] + " " + command[2] + " :" + reason, *it, id_client);
+    server.send_all(":" + server.getUser(id_client).returnNickname() + "!"
+        + server.getUser(id_client).returnUsername() + "@localhost"
+        + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n", *it, id_client);
     return (1);
 }
