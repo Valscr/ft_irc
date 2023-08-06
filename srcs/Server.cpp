@@ -280,19 +280,13 @@ int Server::find_channel(std::string name)
     return (0);
 }
 
-void Server::send_all(std::string msg, Channel chan, int fd_client_actuel)
+void Server::send_all(std::string msg, Channel chan)
 {
     for (std::vector<int>::iterator it = chan.getWhiteList().begin(); it != chan.getWhiteList().end(); ++it) {
         if (this->getListensocket() ==  *it)
             continue ;
         send(*it, msg.c_str(), msg.length(), 0);
     }
-    /*for (size_t  i = 0; i < chan.getWhiteList().size(); i++)
-    {
-        if (this->getListensocket() ==  chan.getWhiteList()[i])
-            continue ;
-        send(chan.getWhiteList()[i], msg.c_str(), msg.length(), 0);
-    }*/
 }
 /**************************************************************/
 /*                            Utils                          */

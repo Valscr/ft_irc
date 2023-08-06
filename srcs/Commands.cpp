@@ -188,7 +188,6 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
         {
             if (!(*chan).isInvited(fd))
             {
-                //ERR_INVITEONLYCHAN
                 server.addmsg_send(fd, ERR_INVITEONLYCHAN(server.getUser(fd).returnNickname(), chanNames[i]));
                 continue;
             }
@@ -209,31 +208,17 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
             }
         }
         (*chan).addUser(fd);
-         server.addmsg_send(fd, (":" + server.getUser(fd).returnNickname() + "!"
-             + server.getUser(fd).returnUsername() + "@" + server.getUser(fd).returnHostname()  + " JOIN " + chanNames[i] + "\r\n"));
-        //MODE message with the current channel's modes;
+         server.send_all((":" + server.getUser(fd).returnNickname() + "!"
+             + server.getUser(fd).returnUsername() + "@" + server.getUser(fd).returnHostname()  + " JOIN " + chanNames[i] + "\r\n"), *chan);
         if ((*chan).getTopic().empty())
             server.addmsg_send(fd, RPL_TOPIC(server.getUser(fd).returnNickname(), chanNames[i], (*chan).getTopic()));
         else
             server.addmsg_send(fd, RPL_NOTOPIC(server.getUser(fd).returnNickname(), chanNames[i]));
         server.addmsg_send(fd, RPL_NAMREPLY(server.getUser(fd).returnNickname(),
             server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname(), (*chan).getName(), (*chan).getListUsers(server)));
+        server.addmsg_send(fd, RPL_ENDOFNAMES(server.getUser(fd).returnNickname(), server.getUser(fd).returnUsername(), "localhost", chanNames[i]));
     }
-    std::cout << " ID du chan " << (*chan).getID() << std::endl;
-    std::cout << "Taille de la liste : " << (*chan).getWhiteList().size() << std::endl;
-    for (std::vector<int>::iterator it = (*chan).getWhiteList().begin(); it != (*chan).getWhiteList().end(); ++it) {
-        std::cout << "White list adress " << &(*it) << std::endl;
-        std::cout << "White list " << *it << std::endl;
-    }
-    /*for (size_t i = 0; i < chan.getWhiteList().size(); i++)
-    {
-        std::cout << "White list adress " << &(chan.getWhiteList()[i]) << std::endl;
-        std::cout << "White list " << chan.getWhiteList()[i] << std::endl;
-    }*/
-        for (size_t i = 0; i < (*chan).getOperators().size(); i++)
-    {
-        std::cout << "Operators list " << (*chan).getOperators()[i] << std::endl;
-    }
+
     tmp++;
     return (1);
 }
@@ -354,6 +339,6 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
     std::cout << "reason : " << reason << std::endl;
     server.send_all(":" + server.getUser(id_client).returnNickname() + "!"
         + server.getUser(id_client).returnUsername() + "@localhost"
-        + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n", *it, id_client);
+        + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n", *it);
     return (1);
 }

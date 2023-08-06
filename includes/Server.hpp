@@ -63,7 +63,7 @@ class Server
         User& getUserwithNickname(std::string name);
         void  addmsg_send(int fd, std::string str);
         void  addmsg_rcv(int fd, std::string str);
-        void  send_all(std::string msg, Channel chan, int fd_client_actuel);
+        void  send_all(std::string msg, Channel chan);
 
         /******************SETTERS****************/
 
