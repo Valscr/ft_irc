@@ -165,7 +165,6 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
     std::vector<std::string> chanNames = split_names(command[1]);
     if (command.size() > 2)
         chanPasswords = split_names(command[2]);
-    
     for (size_t i = 0; i < chanNames.size(); i++)
     {
         if (!(chanNames[i][0] == '#') || (chanNames[i][0] == '&'))
@@ -179,12 +178,13 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
                 chan = server.createChannel(chanNames[i], fd, chanPasswords[i], tmp);
             else
                 chan = server.createChannel(chanNames[i], fd, "", tmp);
-            (*chan).addOperator(fd);
+            (*chan).addOperator(fd); 
         }
         else
         {
             chan = server.getChannel(chanNames[i]);
         }
+        
         if ((*chan).getInviteMode())
         {
             if (!(*chan).isInvited(fd))
@@ -194,14 +194,15 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
                 continue;
             }
         }
+       
         //verifier si le chan necessite un mdp
         //verifier les espaces dans le nom du channel
-        if ((*chan).getHavePassword() && ((chanPasswords.size() < (i + 1)) || (*chan).getPassword() != chanPasswords[i]))
+        if ((*chan).getHavePassword() && command.size() > 2 && ((chanPasswords.size() < (i + 1)) || (*chan).getPassword() != chanPasswords[i]))
         {
             server.addmsg_send(fd, ERR_BADCHANNELKEY(server.getUser(fd).returnNickname(), chanNames[i]));
             continue;
         }
-        
+               
         if (!(*chan).alreadyExist(fd))
         {
             if ((*chan).getHasLimit() && ((*chan).getLimit() < int((*chan).getWhiteList().size() + 1)))
@@ -218,6 +219,7 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
             server.addmsg_send(fd, RPL_TOPIC(server.getUser(fd).returnNickname(), chanNames[i], (*chan).getTopic()));
         else
             server.addmsg_send(fd, RPL_NOTOPIC(server.getUser(fd).returnNickname(), chanNames[i]));
+         
         server.addmsg_send(fd, RPL_NAMREPLY(server.getUser(fd).returnNickname(),
             server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname(), (*chan).getName(), (*chan).getListUsers(server)));
         send_whitelist(server, fd, (*chan).getName(), (":" + server.getUser(fd).returnNickname() + "!"

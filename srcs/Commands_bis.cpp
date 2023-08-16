@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   commands_bis.cpp                                   :+:      :+:    :+:   */
+/*   Commands_bis.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 00:40:50 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/16 22:28:47 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/17 00:07:27 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,7 @@ int		Commands::INVITE(std::vector<std::string> &client, int id, Server &server)
 
 int		Commands::MODE(std::vector<std::string> &client, int id, Server &server)
 {
-    (void)id;
-    if (server.find_channel(client[1]) && server.getChannel(client[1])->is_operator(server.get_fds()[id].fd))
+    if (server.find_channel(client[1]) && client.size() > 2 && server.getChannel(client[1])->is_operator(server.get_fds()[id].fd))
     {
         if (client[2].find("+i") != std::string::npos && server.find_channel(client[1]))
             server.getChannel(client[1])->setInviteMode(true);
@@ -108,7 +107,7 @@ int		Commands::MODE(std::vector<std::string> &client, int id, Server &server)
         if (client[2].find("+l") != std::string::npos && server.find_channel(client[1]))
         {
             server.getChannel(client[1])->setlimitMode(true);
-            server.getChannel(client[1])->setLimit(std::stoi(client[3]));
+            server.getChannel(client[1])->setLimit(std::atoi(client[3].c_str()));
         }
         if (client[2].find("-l") != std::string::npos && server.find_channel(client[1]))
             server.getChannel(client[1])->setlimitMode(false);

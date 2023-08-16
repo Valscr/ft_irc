@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/16 22:35:48 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/17 00:08:02 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ int disconnect(int i, Server &server, bool end)
             server.deleteUser(server.get_fds()[i].fd);
             server.close_fd(id);
             server.erase_fd(id);
-            //server.delete_send(server.get_fds()[i].fd);
         } catch (const std::runtime_error& e) {
             std::cout << "Error: " << e.what();
             return (server.freeEverything(), 0);

@@ -5,6 +5,7 @@ Channel::Channel(std::string name, int fd, std::string password, int i) : _name(
 	//this->_operators.push_back(fd);
 	(void)fd;
 	this->_invite_mode = false;
+	this->_hasLimit = false;
 	if (password == "")
 		this->_havePassword = false;
 	else

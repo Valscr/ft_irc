@@ -207,9 +207,8 @@ void Server::createUser(std::string nickname, int id, int fd)
             }
         }     
     }
-    //maybe ici
-    User *newUser = new User(nickname, fd, id);
-    this->users.push_back(*newUser);
+    User newUser(nickname, fd, id);
+    this->users.push_back(newUser);
 }
 
 int Server::UserExist(std::string name)
@@ -348,7 +347,10 @@ void Server::freeEverything()
         this->close_fd(i);
         this->erase_fd(i);
     }
-    this->users.clear();
+    for (std::vector<Channel*>::iterator it = this->channels.begin(); it != this->channels.end(); ++it) {
+        delete *it;
+    }
+    this->channels.clear();
     this->rcv_client.clear();
     this->send_client.clear();
     delete this->commands;
