@@ -103,7 +103,6 @@ int Commands::USER(std::vector<std::string> &command, int i, Server &server)
 
     if (command.size() < 5)
     {
-        
         disconnect(i, server, false);
         return 0;
     }
@@ -149,12 +148,27 @@ std::vector<std::string>	split_names(std::string str) {
 	return res;
 }
 
+bool spaceChecker(std::string name)
+{
+    for (size_t i = 0; i < name.length(); i++)
+    {
+        if ((name[i] == ' ') || (name[i] == '\n') || (name[i] == '\t'))
+            return (true);
+    }
+    return (false);
+}
+
 int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
 {
     static int tmp = 1;
     std::vector<std::string> chanPasswords;
     Channel *chan = NULL;
     int fd = server.get_fds()[j].fd;
+    std::cout << " Parametre de JOIN : " << std::endl;
+    for (size_t i = 0; i < command.size(); i++)
+    {
+        std::cout << i << " " << command[i] << std::endl;
+    }
 	if (command.size() < 2)
     {
         server.addmsg_send(fd,ERR_NEEDMOREPARAMS(command[0]));
@@ -171,6 +185,11 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
         {
             server.addmsg_send(fd,ERR_BADCHANMASK(chanNames[i]));
             continue ;
+        }
+        if (spaceChecker(chanNames[i]))
+        {
+            server.addmsg_send(fd, ERR_NOSUCHCHANNEL(chanNames[i]));
+            continue;
         }
         if (!server.find_channel(chanNames[i]))
         {

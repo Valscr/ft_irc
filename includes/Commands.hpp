@@ -34,6 +34,7 @@ class	Commands {
 			commandMap.insert(std::make_pair("PING", &Commands::PING));
 			commandMap.insert(std::make_pair("KICK", &Commands::KICK));
 			commandMap.insert(std::make_pair("JOIN", &Commands::JOIN));
+			//commandMap.insert(std::make_pair("QUIT", &Commands::QUIT));
 			return (commandMap);
 		}
 		std::map<std::string, fct> getServices();

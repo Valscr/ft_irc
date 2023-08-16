@@ -107,10 +107,13 @@ Commands *Server::getCommand()
 }
 std::map<int, std::string> &Server::get_send()
 {
-    return (this->rcv_client);
+    return (this->send_client);
 }
 
-
+std::map<int, std::string> &Server::get_rcv()
+{
+    return (this->rcv_client);
+}
 
 void  Server::addmsg_rcv(int fd, std::string str)
 {

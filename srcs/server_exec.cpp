@@ -6,7 +6,7 @@
 /*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/03 03:28:44 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/08/16 02:05:20 by kyacini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ std::vector<std::string>	split_buffer(int fd, std::string str, Server *server) {
     server->addmsg_rcv(fd, str);
 
     std::string input;
-    std::istringstream r_iss(server->get_send()[fd]);
+    std::istringstream r_iss(server->get_rcv()[fd]);
     while (std::getline(r_iss, input, '\r')) {
         line.append(input);
     }
@@ -80,54 +80,73 @@ std::vector<std::string>	split_buffer(int fd, std::string str, Server *server) {
 }
 std::vector<std::string>	split_command(std::string str) {
 	std::vector<std::string>	res;
-
+    int i = 0;
+    std::string stock;
     std::string input;
     std::istringstream r_iss(str);
-    while (std::getline(r_iss, input, ' ')) {
-        res.push_back(input);
+    while (std::getline(r_iss, input, ' '))
+    {
+        if (!input.empty() && (i == 0))
+        {
+            res.push_back(input);
+        }
+        else if (!input.empty() && (i == 1))
+        {
+            res.push_back(stock);
+            stock.erase();
+            res.back().append(input);
+            i = 0;
+        }
+        else if (i == 0)
+        {
+            stock.append(" ");
+            i = 1;
+        }
+        else
+        {
+            stock.append(" ");
+        }
+    }
+    if (!stock.empty())
+    {
+        res.back().append(stock);
+        res.back().append(" ");
+    }
+    else if (str[str.length() - 1] == ' ')
+    {
+        res.back().append(" ");
     }
 	return res;
 }
 
 int exec_command(std::vector<std::string> command, Server &server, int id, std::map<std::string, Commands::fct> services)
 {
-    int fd = server.get_fds()[id].fd;
     int ret = 1;
     std::map<std::string, Commands::fct>::iterator it = services.find(command[0]);
-    if (it != services.end()) {
+    if (it != services.end())
+    {
         Commands cmdObject;
         Commands::fct cmd = it->second;
         ret = (cmdObject.*cmd)(command, id, server);
-        if (!server.getUsersList().empty())
-        {
-            std::cout << "nickname " << server.getUser(fd).returnNickname() << std::endl;
-            std::cout << "username " << server.getUser(fd).returnUsername() << std::endl;
-            std::cout << "hostname " << server.getUser(fd).returnHostname() << std::endl;
-            std::cout << "realname " << server.getUser(fd).returnRealname() << std::endl;
-        }
-        if (!server.getChannels().empty())
-        {
-            for (size_t i = 0; i < server.getChannels().size(); i++)
-            {
-                Channel *chan = server.getChannels()[i];
-                std::cout << "Nom : " << (*chan).getName() << std::endl;
-                std::cout << "Id : " << (*chan).getID() << std::endl;
-                std::cout << "White list : " << std::endl;
-                for (std::vector<int>::iterator it = (*chan).getWhiteList().begin(); it != (*chan).getWhiteList().end(); ++it)
-                {
-		            std::cout << "fd : " << *it << std::endl;
-                }
-            }
-        }
+
     } else if (command[0] != "CAP"){
         msg_421();
         return (ret);
     }
     try
     {
-        send(fd, server.get_send_fd(fd).c_str(), server.get_send_fd(fd).length(), 0);
-        std::cout << ANSI_GREEN << MAX_CLIENTS + 1 - id << " > " <<  server.get_send_fd(fd).c_str() << ANSI_RESET << std::endl;
-        server.erase_send(fd);
+        std::cout << server.get_send().size() << std::endl;
+        std::map<int, std::string>::iterator it;
+        for (it = server.get_send().begin(); it != server.get_send().end(); ++it)
+        {
+            if (it->first == server.getListensocket())
+                continue ;
+            if (it->second.empty())
+                continue ;
+            send(it->first, it->second.c_str(), it->second.length(), 0);
+            std::cout << ANSI_GREEN << MAX_CLIENTS + 1 - id << " > " <<  it->second.c_str() << ANSI_RESET << std::endl;
+            server.erase_send(it->first);
+        }
     }
     catch(const std::runtime_error& e)
     {
@@ -179,6 +198,8 @@ int server_exec(Server &server)
                         {
                             std::cout << "------------------------------" << std::endl;
                             std::vector<std::string> command = split_command(*it);
+                            for(size_t i = 0; i < command.size(); i++)
+                                std::cout << "|" << command[i] << "|" << std::endl;
                             std::cout << "\033[96m" << server.getUser(server.get_fds()[i].fd).returnId() << " > " << (*it) << "\033[0m" << std::endl;
                             if ((server.getUser(server.get_fds()[i].fd).returnPassword() == true) || ((command[0] == "PASS") || (command[0] == "CAP")))
                             {

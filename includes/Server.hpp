@@ -59,6 +59,7 @@ class Server
         User& getUser(int i);
         std::string  &get_send_fd(int fd);
         std::map<int, std::string> &get_send();
+        std::map<int, std::string> &get_rcv();
         std::string get_name();
         User& getUserwithNickname(std::string name);
         void  addmsg_send(int fd, std::string str);
