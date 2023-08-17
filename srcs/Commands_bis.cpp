@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 00:40:50 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/17 10:51:31 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/17 12:02:12 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,34 +88,34 @@ int		Commands::MODE(std::vector<std::string> &client, int id, Server &server)
 {
     if (server.find_channel(client[1]) && client.size() > 2 && server.getChannel(client[1])->is_operator(server.get_fds()[id].fd))
     {
-        if (client[2].find("+i") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '+' && client[2][1] == 'i' && client[2].length() < 3 && server.find_channel(client[1]))
             server.getChannel(client[1])->setInviteMode(true);
-        if (client[2].find("-i") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '-' && client[2][1] == 'i' && client[2].length() < 3 && server.find_channel(client[1]))
             server.getChannel(client[1])->setInviteMode(false);
-        if (client[2].find("+t") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '+' && client[2][1] == 't' && client[2].length() < 3 && server.find_channel(client[1]))
             server.getChannel(client[1])->setTopicRestriction(true);
-        if (client[2].find("-t") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '-' && client[2][1] == 't' && client[2].length() < 3 && server.find_channel(client[1]))
             server.getChannel(client[1])->setTopicRestriction(false);
-        if (client[2].find("+o") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '+' && client[2][1] == 'o' && client[2].length() < 3 && server.find_channel(client[1]))
         {
             server.getChannel(client[1])->addOperator(server.getUserwithNickname(client[3]).returnFd());
         }
-        if (client[2].find("-o") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '-' && client[2][1] == 'o' && client[2].length() < 3 && server.find_channel(client[1]))
             server.getChannel(client[1])->removeOperator(server.getUserwithNickname(client[3]).returnFd());
-        if (client[2].find("+l") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '+' && client[2][1] == 'l' && client[2].length() < 3 && server.find_channel(client[1]))
         {
             server.getChannel(client[1])->setlimitMode(true);
             server.getChannel(client[1])->setLimit(std::atoi(client[3].c_str()));
         }
-        if (client[2].find("-l") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '-' && client[2][1] == 'l' && client[2].length() < 3 && server.find_channel(client[1]))
             server.getChannel(client[1])->setlimitMode(false);
-        if (client[2].find("+k") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '+' && client[2][1] == 'k' && client[2].length() < 3 && server.find_channel(client[1]))
         {
             server.getChannel(client[1])->setPassMode(true);
             server.getChannel(client[1])->setPassword(client[3]);
 
         }
-        if (client[2].find("-k") != std::string::npos && server.find_channel(client[1]))
+        if (client[2][0] == '-' && client[2][1] == 'k' && client[2].length() < 3 && server.find_channel(client[1]))
         {
             server.getChannel(client[1])->setPassMode(false);
         }

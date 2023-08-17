@@ -66,7 +66,7 @@
 # define ERR_NOTONCHANNEL(chan) ("442 " + std::string(chan) + " :You're not on that channel\r\n")
 # define ERR_BADCHANMASK(channel) ("476 " + std::string(channel) + " :Bad Channel Mask\r\n")
 # define ERR_CHANOPRIVSNEEDED(chan) ("482 " + std::string(chan) + " :You're not channel operator\r\n")
-# define ERR_CHANNELISFULL(nick, chan) ("471" + std::string(nick) + " " + std::string(chan) + " :Cannot join channel (+l)\r\n")
+# define ERR_CHANNELISFULL(nick, chan) ("471 " + std::string(nick) + " " + std::string(chan) + " :Cannot join channel (+l)\r\n")
 # define ERR_BADCHANNELKEY(nick, chan)	("475 " + std::string(nick) + " " + std::string(chan) + " :Cannot join channel (+k)\r\n")
 # define ERR_INVITEONLYCHAN(nick, chan) ("473 " + nick + " " + chan + " :Cannot join channel (+i)\r\n")
 # define RPL_TOPIC(nick, chan, topic) ("332 " + nick + " " + chan + " :" + topic + "\r\n")

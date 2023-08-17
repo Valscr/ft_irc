@@ -199,13 +199,11 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
             continue;
         }
                
-        if (!(*chan).alreadyExist(fd))
+        std::cout << "test " << int((*chan).getWhiteList().size() + 1) << std::endl;
+        if ((*chan).getHasLimit() && ((*chan).getLimit() < int((*chan).getWhiteList().size() + 1)))
         {
-            if ((*chan).getHasLimit() && ((*chan).getLimit() < int((*chan).getWhiteList().size() + 1)))
-            {
-                server.addmsg_send(fd, ERR_CHANNELISFULL(server.getUser(fd).returnNickname(), chanNames[i]));
-                continue;
-            }
+            server.addmsg_send(fd, ERR_CHANNELISFULL(server.getUser(fd).returnNickname(), chanNames[i]));
+            continue;
         }
         if (!(*chan).isInvited(fd))
             (*chan).addUser(fd);
