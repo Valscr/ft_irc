@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/17 00:08:02 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/17 11:18:18 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,13 @@ typedef void (*fct)(std::vector<std::string> &, int, Server &);
 bool run;
 int disconnect(int i, Server &server, bool end)
 {
-    int id;
+    int id = server.getUser(server.get_fds()[i].fd).returnId();
     if (server.isUser_id(i))
     {
         try {
-            id = server.getUser(server.get_fds()[i].fd).returnId();
             server.deleteUser(server.get_fds()[i].fd);
-            server.close_fd(id);
-            server.erase_fd(id);
+            server.close_fd(i);
+            server.erase_fd(i);
         } catch (const std::runtime_error& e) {
             std::cout << "Error: " << e.what();
             return (server.freeEverything(), 0);
@@ -94,27 +93,18 @@ std::vector<std::string>	split_command(std::string str) {
 
 int exec_command(std::vector<std::string> command, Server &server, int id, std::map<std::string, Commands::fct> services)
 {
-    int fd = server.get_fds()[id].fd;
     int ret = 1;
     std::map<std::string, Commands::fct>::iterator it = services.find(command[0]);
     if (it != services.end()) {
         Commands cmdObject;
         Commands::fct cmd = it->second;
         ret = (cmdObject.*cmd)(command, id, server);
-        if (!server.getUsersList().empty() && server.UserExist_fd(fd))
-        {
-            std::cout << "nickname " << server.getUser(fd).returnNickname() << std::endl;
-            std::cout << "username " << server.getUser(fd).returnUsername() << std::endl;
-            std::cout << "hostname " << server.getUser(fd).returnHostname() << std::endl;
-            std::cout << "realname " << server.getUser(fd).returnRealname() << std::endl;
-        }
         if (!server.getChannels().empty())
         {
             for (size_t i = 0; i < server.getChannels().size(); i++)
             {
                 Channel *chan = server.getChannels()[i];
                 std::cout << "Nom : " << (*chan).getName() << std::endl;
-                std::cout << "Id : " << (*chan).getID() << std::endl;
                 std::cout << "White list : " << std::endl;
                 for (std::vector<int>::iterator it = (*chan).getWhiteList().begin(); it != (*chan).getWhiteList().end(); ++it)
                 {
@@ -166,8 +156,8 @@ int server_exec(Server &server)
                     new_user(server);
                 else if (server.get_fds()[i].revents & POLLHUP)
                 {
-                    //if(!disconnect(i, server, false))
-                        //return 0;
+                    if(!disconnect(i, server, false))
+                        return 0;
                 }
                 else 
                 {
@@ -179,8 +169,8 @@ int server_exec(Server &server)
                     }
                     else if (bytesRead == 0)
                     {
-                        //if(!disconnect(i, server, false))
-                            //return 0;
+                        if(!disconnect(i, server, false))
+                            return 0;
                     }
                     else
                     {

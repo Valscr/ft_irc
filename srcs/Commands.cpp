@@ -189,15 +189,11 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
         {
             if (!(*chan).isInvited(fd))
             {
-                //ERR_INVITEONLYCHAN
                 server.addmsg_send(fd, ERR_INVITEONLYCHAN(server.getUser(fd).returnNickname(), chanNames[i]));
                 continue;
             }
         }
-       
-        //verifier si le chan necessite un mdp
-        //verifier les espaces dans le nom du channel
-        if ((*chan).getHavePassword() && command.size() > 2 && ((chanPasswords.size() < (i + 1)) || (*chan).getPassword() != chanPasswords[i]))
+        if ((*chan).getHavePassword() && ((chanPasswords.size() < (i + 1)) || (*chan).getPassword() != chanPasswords[i]))
         {
             server.addmsg_send(fd, ERR_BADCHANNELKEY(server.getUser(fd).returnNickname(), chanNames[i]));
             continue;
@@ -211,7 +207,8 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
                 continue;
             }
         }
-        (*chan).addUser(fd);
+        if (!(*chan).isInvited(fd))
+            (*chan).addUser(fd);
          server.addmsg_send(fd, (":" + server.getUser(fd).returnNickname() + "!"
              + server.getUser(fd).returnUsername() + "@" + server.getUser(fd).returnHostname()  + " JOIN " + chanNames[i] + "\r\n"));
         //MODE message with the current channel's modes;
@@ -225,22 +222,6 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
         send_whitelist(server, fd, (*chan).getName(), (":" + server.getUser(fd).returnNickname() + "!"
              + server.getUser(fd).returnUsername() + "@" + server.getUser(fd).returnHostname()  + " JOIN " + chanNames[i] + "\r\n"));
         server.addmsg_send(fd, RPL_ENDOFNAMES(server.getUser(fd).returnNickname(), (*chan).getName()));
-        
-    }
-    std::cout << " ID du chan " << (*chan).getID() << std::endl;
-    std::cout << "Taille de la liste : " << (*chan).getWhiteList().size() << std::endl;
-    for (std::vector<int>::iterator it = (*chan).getWhiteList().begin(); it != (*chan).getWhiteList().end(); ++it) {
-        std::cout << "White list adress " << &(*it) << std::endl;
-        std::cout << "White list " << *it << std::endl;
-    }
-    /*for (size_t i = 0; i < chan.getWhiteList().size(); i++)
-    {
-        std::cout << "White list adress " << &(chan.getWhiteList()[i]) << std::endl;
-        std::cout << "White list " << chan.getWhiteList()[i] << std::endl;
-    }*/
-        for (size_t i = 0; i < (*chan).getOperators().size(); i++)
-    {
-        std::cout << "Operators list " << (*chan).getOperators()[i] << std::endl;
     }
     tmp++;
     return (1);
