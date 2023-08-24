@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_exec.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kyacini <kyacini@student.42.fr>            +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/17 16:12:12 by kyacini          ###   ########.fr       */
+/*   Updated: 2023/08/17 11:18:18 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,41 +82,11 @@ std::vector<std::string>	split_buffer(int fd, std::string str, Server *server) {
 }
 std::vector<std::string>	split_command(std::string str) {
 	std::vector<std::string>	res;
-    int i = 0;
-    std::string stock;
+
     std::string input;
     std::istringstream r_iss(str);
-    while (std::getline(r_iss, input, ' '))
-    {
-        if (!input.empty() && (i == 0))
-        {
-            res.push_back(input);
-        }
-        else if (!input.empty() && (i == 1))
-        {
-            res.push_back(stock);
-            stock.erase();
-            res.back().append(input);
-            i = 0;
-        }
-        else if (i == 0)
-        {
-            stock.append(" ");
-            i = 1;
-        }
-        else
-        {
-            stock.append(" ");
-        }
-    }
-    if (!stock.empty())
-    {
-        res.back().append(stock);
-        res.back().append(" ");
-    }
-    else if (str[str.length() - 1] == ' ')
-    {
-        res.back().append(" ");
+    while (std::getline(r_iss, input, ' ')) {
+        res.push_back(input);
     }
 	return res;
 }

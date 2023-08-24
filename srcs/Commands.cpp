@@ -198,8 +198,6 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
             server.addmsg_send(fd, ERR_BADCHANNELKEY(server.getUser(fd).returnNickname(), chanNames[i]));
             continue;
         }
-               
-        std::cout << "test " << int((*chan).getWhiteList().size() + 1) << std::endl;
         if ((*chan).getHasLimit() && ((*chan).getLimit() < int((*chan).getWhiteList().size() + 1)))
         {
             server.addmsg_send(fd, ERR_CHANNELISFULL(server.getUser(fd).returnNickname(), chanNames[i]));
@@ -314,8 +312,8 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
     std::vector<int> op = (*it).getOperators();
     std::vector<int>::iterator itVictim = std::find(op.begin(), op.end(), *vict);
     if (itVictim != op.end())
-        server.getChannel(command[1])->getOperators().erase(itVictim);
-    server.getChannel(command[1])->getWhiteList().erase(vict);
+        op.erase(itVictim);
+    (*it).getWhiteList().erase(vict);
     if((command.size() < 5) )
     {
         reason = server.getUser(id_client).returnNickname();
