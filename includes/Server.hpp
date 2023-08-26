@@ -37,6 +37,7 @@ class Server
         struct sockaddr_in serverAddress;
         std::map<int, std::string> rcv_client;
         std::map<int, std::string> send_client;
+        
         Commands *commands;
     
     
@@ -66,6 +67,7 @@ class Server
         void  addmsg_rcv(int fd, std::string str);
         void  send_all(std::string msg, Channel chan, int fd_client_actuel);
         User& find_user(int id);
+        int find_fds(int i);
 
         /******************SETTERS****************/
 

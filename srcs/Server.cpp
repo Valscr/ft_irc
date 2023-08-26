@@ -64,6 +64,18 @@ void Server::set_Clientsocket(int clientsocket)
 /*                          GETTERS                                   */
 /*********************************************************************/
 
+int Server::find_fds(int i)
+{
+    int j = 0;
+    for (std::vector<pollfd>::iterator it = this->fds.begin(); it != this->fds.end(); ++it)
+    {
+        if (it->fd == i)
+            return (j);
+        j++;
+    }
+    return (0);
+}
+
 std::string Server::get_name()
 {
     return (this->name);
@@ -321,12 +333,8 @@ void Server::close_fd(int i)
 
 void Server::erase_fd(int i)
 {
-    int size = this->fds.size();
-    if (i < size) {
-        this->fds.erase(this->fds.begin() + i);
-    } else {
-        std::cout << "Position du fd invalide !" << std::endl;
-    }
+    if (this->find_fds(i) != 0)
+        this->fds.erase(this->fds.begin() + this->find_fds(i));
 }
 
 void  Server::erase_send(int fd)

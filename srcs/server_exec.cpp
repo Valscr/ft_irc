@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/17 11:18:18 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/26 20:04:27 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ int server_exec(Server &server)
     {
         if (poll(server.get_fds().data(), server.get_fds().size(), -1) < 0)
             handleSignal(1);
+        
         for (size_t i = 0; i < server.get_fds().size(); i++)
         {
             if (server.get_fds()[i].revents)
@@ -159,7 +160,7 @@ int server_exec(Server &server)
                     if(!disconnect(i, server, false))
                         return 0;
                 }
-                else 
+                else
                 {
                     int bytesRead = recv(server.get_fds()[i].fd, buffer, BUFFER_SIZE, 0);
                     if (bytesRead < 0)
