@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 00:40:50 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/26 18:45:14 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/30 10:37:29 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,7 @@ int		Commands::PRIVMSG(std::vector<std::string> &client, int id, Server &server)
 int		Commands::QUIT(std::vector<std::string> &command, int id, Server &server)
 {
     (void)command;
-    (void)id;
-    (void)server;
-    //disconnect(id, server, false);
+    disconnect(id, server, false);
     return (1);
 }
 
