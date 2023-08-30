@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands_bis.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 00:40:50 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/30 10:37:29 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/30 14:12:15 by vescaffr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int		Commands::MODE(std::vector<std::string> &client, int id, Server &server)
         }
         if (client[2][0] == '-' && client[2][1] == 'l' && client[2].length() < 3 && server.find_channel(client[1]))
             server.getChannel(client[1])->setlimitMode(false);
-        if (client[2][0] == '+' && client[2][1] == 'k' && client[2].length() < 3 && server.find_channel(client[1]))
+        if (client[2][0] == '+' && client[2][1] == 'k' && client[2].length() < 3 && server.find_channel(client[1]) && client.size() == 4)
         {
             server.getChannel(client[1])->setPassMode(true);
             server.getChannel(client[1])->setPassword(client[3]);

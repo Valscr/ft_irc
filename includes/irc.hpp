@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:16:44 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/16 17:14:19 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/30 15:34:44 by vescaffr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 #include <signal.h>
 #include "msg.hpp"
 
-#define MAX_CLIENTS 20
+#define MAX_CLIENTS 100
 #define SERVER_NAME "server-irc"
 #define BUFFER_SIZE 1024
 #define ANSI_RESET "\033[0m"

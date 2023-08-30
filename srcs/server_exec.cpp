@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_exec.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/30 10:25:37 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/30 16:28:05 by vescaffr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void handleSignal(int signal)
 void new_user(Server &server)
 {
     static int id = 1;
-    int nb_fds = server.get_fds().size();
     server.set_Clientsocket(accept(server.getListensocket(), NULL, NULL)); 
     if (server.getClientsocket() < 0) {
         if (errno != EWOULDBLOCK && errno != EAGAIN)
@@ -57,8 +56,7 @@ void new_user(Server &server)
             throw std::runtime_error("configuration socket in non-blocking mode");
         server.set_fds_i_fd();
         server.createUser("", id, server.get_fds().back().fd);
-        //std::cout << nb_fds << std::endl;
-        int fd = server.getUsersList()[nb_fds - 1].returnFd();
+        int fd = server.getClientsocket();
 		std::cout << "Client " << id << "[" << fd << "]" << " created" << std::endl;
     }
     id++;

@@ -76,6 +76,19 @@ int Server::find_fds(int i)
     return (0);
 }
 
+pollfd Server::find_fds_fd(int i)
+{
+    int j = 0;
+    for (std::vector<pollfd>::iterator it = this->fds.begin(); it != this->fds.end(); ++it)
+    {
+        if (it->fd == i)
+            return (this->fds[j]);
+        j++;
+    }
+    pollfd emptyPollfd = { -1, 0, 0 };  // Valeur par défaut pour indiquer "non trouvé"
+    return (emptyPollfd);
+}
+
 std::string Server::get_name()
 {
     return (this->name);
@@ -327,7 +340,8 @@ void Server::send_all(std::string msg, Channel chan, int fd_client_actuel)
 
 void Server::close_fd(int i)
 {
-    close(this->fds[i].fd);
+    if (this->fds[i].fd > 0)
+        close(this->fds[i].fd);
     this->fds[i].fd = -1;
 }
 
@@ -354,6 +368,7 @@ void Server::freeEverything()
     {
         this->close_fd(i);
         this->erase_fd(i);
+            
     }
     for (std::vector<Channel*>::iterator it = this->channels.begin(); it != this->channels.end(); ++it) {
         delete *it;

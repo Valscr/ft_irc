@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
+#    By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/07 20:51:27 by valentin          #+#    #+#              #
-#    Updated: 2023/08/30 10:08:03 by valentin         ###   ########.fr        #
+#    Updated: 2023/08/30 16:13:12 by vescaffr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ WFLAGS = -Wall -Wextra -Werror -I.
 
 #******************************************************************************#
 
-NAME = ircserver
+NAME = ircserv
 all: $(NAME)
 
 $(NAME): $(OBJS_DIR) $(OBJS)

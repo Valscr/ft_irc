@@ -283,8 +283,6 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
             break;
         }
     }
-    std::cout << " *vict et id_victim :" << *vict << " " << id_victim << std::endl;
-    std::cout << " id_client :" << id_client << std::endl;
     if (!found)
     {
         server.addmsg_send(server.get_fds()[id].fd, ERR_USERNOTINCHANNEL(command[2], command[1]).c_str());
@@ -303,6 +301,12 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
         server.addmsg_send(server.get_fds()[id].fd, ERR_CHANOPRIVSNEEDED(command[1]).c_str());
         return (1);
     }
+    if((command.size() < 4))
+    {
+        reason = server.getUser(id_client).returnNickname();
+    }
+    else
+        reason = ft_concatener(command, 4, 5, command[3].substr(1));
     send_whitelist(server, id_client, command[1], ":" + server.getUser(id_client).returnNickname() + "!"
         + server.getUser(id_client).returnUsername() + "@localhost"
         + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n");
@@ -314,15 +318,5 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
     if (itVictim != op.end())
         op.erase(itVictim);
     (*it).getWhiteList().erase(vict);
-    if((command.size() < 5) )
-    {
-        reason = server.getUser(id_client).returnNickname();
-        std::cout << "empty reason : " << reason << std::endl;
-    }
-    else
-        reason = ft_concatener(command, 4, 5, command[3].substr(1));
-    std::cout << "reason : " << reason << std::endl;
-
-    
     return (1);
 }

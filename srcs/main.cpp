@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skhali <skhali@student.42.fr>              +#+  +:+       +#+        */
+/*   By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 13:17:02 by valentin          #+#    #+#             */
-/*   Updated: 2023/07/23 16:32:02 by skhali           ###   ########.fr       */
+/*   Updated: 2023/08/30 16:47:27 by vescaffr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 {
     if (argc != 3)
     {
-        std::cout << "Usage: ./server <port> <password>" << std::endl;
+        std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
         return (0);
     }
     try {

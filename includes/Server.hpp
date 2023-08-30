@@ -68,6 +68,7 @@ class Server
         void  send_all(std::string msg, Channel chan, int fd_client_actuel);
         User& find_user(int id);
         int find_fds(int i);
+        pollfd find_fds_fd(int i);
 
         /******************SETTERS****************/
 
