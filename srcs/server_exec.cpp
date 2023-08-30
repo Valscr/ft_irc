@@ -6,7 +6,7 @@
 /*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/26 20:04:27 by valentin         ###   ########.fr       */
+/*   Updated: 2023/08/30 10:25:37 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ int server_exec(Server &server)
                             std::cout << "------------------------------" << std::endl;
                             std::vector<std::string> command = split_command(*it);
                             std::cout << "\033[96m" << server.getUser(server.get_fds()[i].fd).returnId() << " < " << (*it) << "\033[0m" << std::endl;
-                            if ((server.getUser(server.get_fds()[i].fd).returnPassword() == true) || ((command[0] == "PASS") || (command[0] == "CAP")))
+                            if (!command.empty() && ((server.getUser(server.get_fds()[i].fd).returnPassword() == true) || ((command[0] == "PASS") || (command[0] == "CAP"))))
                             {
                                 if (!exec_command(command, server, i, server.getCommand()->getServices()))
                                     break;

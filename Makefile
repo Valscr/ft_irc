@@ -6,7 +6,7 @@
 #    By: valentin <valentin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/07 20:51:27 by valentin          #+#    #+#              #
-#    Updated: 2023/08/06 19:46:35 by valentin         ###   ########.fr        #
+#    Updated: 2023/08/30 10:08:03 by valentin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ WFLAGS = -Wall -Wextra -Werror -I.
 
 #******************************************************************************#
 
-NAME = server
+NAME = ircserver
 all: $(NAME)
 
 $(NAME): $(OBJS_DIR) $(OBJS)
