@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands_bis.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: valentin <valentin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 00:40:50 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/30 14:12:15 by vescaffr         ###   ########.fr       */
+/*   Updated: 2023/08/30 20:01:03 by valentin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ int		Commands::PRIVMSG(std::vector<std::string> &client, int id, Server &server)
         if (server.find_channel(find_next_word(8, buffer)) && server.getChannel(find_next_word(8, buffer))->find_channels(server.get_fds()[id].fd))
             send_whitelist(server, server.get_fds()[id].fd, find_next_word(8, buffer), (":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer + "\r\n").c_str());
         else if (server.find_channel(find_next_word(8, buffer)) && !server.getChannel(find_next_word(8, buffer))->find_channels(id))
-            server.get_send_fd(server.getUserwithNickname(client[2]).returnFd()).append((ERR_CANNOTSENDTOCHAN(server.getUser(server.get_fds()[id].fd).returnNickname(), client[1])).c_str());
+            server.get_send_fd(server.get_fds()[id].fd).append((ERR_CANNOTSENDTOCHAN(server.getUser(server.get_fds()[id].fd).returnNickname(), client[1])).c_str());
         else
-            server.get_send_fd(server.getUserwithNickname(client[2]).returnFd()).append((ERR_NOSUCHNICK(client[1])).c_str());
+            server.get_send_fd(server.get_fds()[id].fd).append((ERR_NOSUCHNICK(client[1])).c_str());
     }
     else
     {
@@ -42,6 +42,29 @@ int		Commands::PRIVMSG(std::vector<std::string> &client, int id, Server &server)
             server.get_send_fd(server.getUserwithNickname(client[1]).returnFd()).append((":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer + "\r\n").c_str());
         else
             server.get_send_fd(server.get_fds()[id].fd).append((RPL_AWAY(server.getUser(server.get_fds()[id].fd).returnNickname(), client[1])).c_str());
+    }
+    return 1;
+}
+
+int		Commands::NOTICE(std::vector<std::string> &client, int id, Server &server)
+{
+    std::string buffer;
+
+    for (size_t i = 0; i < client.size(); ++i) {
+        buffer += client[i];
+        if (i < client.size() - 1) {
+            buffer += " ";
+        }
+    }
+    if (buffer.find("NOTICE #") != std::string::npos)
+    {
+        if (server.find_channel(find_next_word(7, buffer)) && server.getChannel(find_next_word(7, buffer))->find_channels(server.get_fds()[id].fd))
+            send_whitelist(server, server.get_fds()[id].fd, find_next_word(7, buffer), (":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer + "\r\n").c_str());
+    }
+    else
+    {
+        if (server.UserExist(client[1]))
+            server.get_send_fd(server.getUserwithNickname(client[1]).returnFd()).append((":" + server.getUser(server.get_fds()[id].fd).returnNickname() + " " + buffer + "\r\n").c_str());
     }
     return 1;
 }
