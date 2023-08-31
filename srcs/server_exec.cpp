@@ -6,7 +6,7 @@
 /*   By: vescaffr <vescaffr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 11:02:33 by valentin          #+#    #+#             */
-/*   Updated: 2023/08/30 16:28:05 by vescaffr         ###   ########.fr       */
+/*   Updated: 2023/08/31 15:25:52 by vescaffr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,19 +97,6 @@ int exec_command(std::vector<std::string> command, Server &server, int id, std::
         Commands cmdObject;
         Commands::fct cmd = it->second;
         ret = (cmdObject.*cmd)(command, id, server);
-        if (!server.getChannels().empty())
-        {
-            for (size_t i = 0; i < server.getChannels().size(); i++)
-            {
-                Channel *chan = server.getChannels()[i];
-                std::cout << "Nom : " << (*chan).getName() << std::endl;
-                std::cout << "White list : " << std::endl;
-                for (std::vector<int>::iterator it = (*chan).getWhiteList().begin(); it != (*chan).getWhiteList().end(); ++it)
-                {
-		            std::cout << "fd : " << *it << std::endl;
-                }
-            }
-        }
     } else if (command[0] != "CAP"){
         msg_421();
         return (ret);
@@ -185,6 +172,11 @@ int server_exec(Server &server)
                             {
                                 if (!exec_command(command, server, i, server.getCommand()->getServices()))
                                     break;
+                            }
+                            else if (command.empty())
+                            {
+                                msg_421();
+                                break;
                             }
                             else
                             {

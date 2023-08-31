@@ -301,12 +301,12 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
         server.addmsg_send(server.get_fds()[id].fd, ERR_CHANOPRIVSNEEDED(command[1]).c_str());
         return (1);
     }
-    if((command.size() < 4))
+    if((command[3].length() == 1 && command[3][0] == ':'))
     {
         reason = server.getUser(id_client).returnNickname();
     }
     else
-        reason = ft_concatener(command, 4, 5, command[3].substr(1));
+        reason = command[3].substr(1);
     send_whitelist(server, id_client, command[1], ":" + server.getUser(id_client).returnNickname() + "!"
         + server.getUser(id_client).returnUsername() + "@localhost"
         + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n");
