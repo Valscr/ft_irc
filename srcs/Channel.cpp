@@ -121,12 +121,16 @@ int Channel::alreadyExist(int fd)
 		if (*it == fd)
 			return 1;
     }
+	for (std::vector<int>::iterator ot = this->_operators.begin(); ot != this->_operators.end(); ++ot) {
+		if (*ot == fd)
+			return 1;
+    }
 	/*for (size_t i = 0; i < this->_users.size(); i++)
 	{
 		if (this->_users[i] == fd)
 			return (1);
 	}*/
-	return (1);
+	return (0);
 }
 
 bool Channel::getHavePassword()

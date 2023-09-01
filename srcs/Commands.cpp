@@ -301,22 +301,19 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
         server.addmsg_send(server.get_fds()[id].fd, ERR_CHANOPRIVSNEEDED(command[1]).c_str());
         return (1);
     }
-    if((command[3].length() == 1 && command[3][0] == ':'))
+   
+    if (server.getChannel(command[1])->alreadyExist(server.getUserwithNickname(command[2]).returnFd()))
     {
-        reason = server.getUser(id_client).returnNickname();
+        if((command[3].length() == 1 && command[3][0] == ':'))
+            reason = server.getUser(id_client).returnNickname();
+        else
+            reason = command[3].substr(1);
+        send_whitelist(server, id_client, command[1], ":" + server.getUser(id_client).returnNickname() + "!"
+            + server.getUser(id_client).returnUsername() + "@localhost" + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n");
+        server.addmsg_send(server.get_fds()[id].fd, (":" + server.getUser(id_client).returnNickname() + "!"
+            + server.getUser(id_client).returnUsername() + "@localhost" + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n").c_str());
+        server.getChannel(command[1])->removeWhiteList(server.getUserwithNickname(command[2]).returnFd());
+        server.getChannel(command[1])->removeOperator(server.getUserwithNickname(command[2]).returnFd());
     }
-    else
-        reason = command[3].substr(1);
-    send_whitelist(server, id_client, command[1], ":" + server.getUser(id_client).returnNickname() + "!"
-        + server.getUser(id_client).returnUsername() + "@localhost"
-        + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n");
-    server.addmsg_send(server.get_fds()[id].fd, (":" + server.getUser(id_client).returnNickname() + "!"
-        + server.getUser(id_client).returnUsername() + "@localhost"
-        + " KICK " + command[1] + " " + command[2] + " :" + reason + "\r\n").c_str());
-    std::vector<int> op = (*it).getOperators();
-    std::vector<int>::iterator itVictim = std::find(op.begin(), op.end(), *vict);
-    if (itVictim != op.end())
-        op.erase(itVictim);
-    (*it).getWhiteList().erase(vict);
     return (1);
 }

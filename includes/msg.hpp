@@ -62,7 +62,7 @@
 //Message CHANNEL
 # define ERR_NOSUCHCHANNEL(channel) ("403 " + std::string(channel) + " :No such channel\r\n")
 # define ERR_CANNOTSENDTOCHAN(nick, chan) ("404 " + std::string(nick) + " " + std::string(chan) + " :Cannot send message to this channel\r\n")
-# define ERR_USERNOTINCHANNEL(nick, chan) ("441 " + std::string(nick) + " " + std::string(chan) + " :They aren't on that channel\r\n")
+# define ERR_USERNOTINCHANNEL(nick, chan) ("441 " + std::string(chan) + " :" + std::string(nick) + " is not on this channel\r\n")
 # define ERR_NOTONCHANNEL(chan) ("442 " + std::string(chan) + " :You're not on that channel\r\n")
 # define ERR_BADCHANMASK(channel) ("476 " + std::string(channel) + " :Bad Channel Mask\r\n")
 # define ERR_CHANOPRIVSNEEDED(chan) ("482 " + std::string(chan) + " :You're not channel operator\r\n")
