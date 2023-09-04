@@ -78,11 +78,20 @@ int Commands::NICK(std::vector<std::string> &command, int i, Server &server)
     else if(server.NicknameMatching(command[1]))
     {
         server.addmsg_send(fd, ERR_NICKNAMEISUSE(command[1]));
-        disconnect(i, server, false);
-        return 0;
+        server.getUser(fd).setNickname("User" + std::to_string(server.getUser(fd).returnId()));
     }
-    server.getUser(fd).setNickname(command[1]);
-    server.getUser(fd).setHasNickname(true);
+    else if (!server.NicknameMatching(command[1]))
+    {
+        if (server.getUser(fd).returnRegistered() == false)
+            server.getUser(fd).setNickname(command[1]);
+        if (!server.getUser(fd).returnUsername().empty() && server.getUser(fd).returnRegistered() == false)
+        {
+            server.getUser(fd).setRegistered(true);
+            server.addmsg_send(fd,RPL_WELCOME(server.getUser(fd).returnNickname(),
+            server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname()));
+        }
+        server.getUser(fd).setHasNickname(true);
+    }
     return (1);
 }
 
@@ -101,10 +110,8 @@ int Commands::USER(std::vector<std::string> &command, int i, Server &server)
 {
     int fd = server.get_fds()[i].fd;
     int id = server.getUser(fd).returnId();
-
     if (command.size() < 5)
     {
-        
         disconnect(i, server, false);
         return 0;
     }
@@ -113,15 +120,18 @@ int Commands::USER(std::vector<std::string> &command, int i, Server &server)
         server.addmsg_send(fd,ERR_ALREADYREGISTERED);
         return 1;
     }
-    if (server.UserExist_fd(fd) && server.getUser(fd).returnHasNickname())
+    if (server.UserExist_fd(fd))
     {
         server.getUser(fd).setUsername(command[1]);
         server.getUser(fd).setHotsname(command[2]);
         server.getUser(fd).setRealsname(ft_concatener(command, 5, command.size(), command[4].substr(1)));
-        server.getUser(fd).setRegistered(true);
         std::cout << "Client " << id << "[" << fd << "]" << " connected" << std::endl;
-        server.addmsg_send(fd,RPL_WELCOME(server.getUser(fd).returnNickname(),
+        if (server.getUser(fd).returnRegistered() == false && server.getUser(fd).returnHasNickname())
+        {
+            server.addmsg_send(fd,RPL_WELCOME(server.getUser(fd).returnNickname(),
             server.getUser(fd).returnUsername(), server.getUser(fd).returnHostname()));
+            server.getUser(fd).setRegistered(true);
+        }
         return (1);
     }
     else
@@ -285,7 +295,7 @@ int Commands::KICK(std::vector<std::string> &command, int id, Server &server)
     }
     if (!found)
     {
-        server.addmsg_send(server.get_fds()[id].fd, ERR_USERNOTINCHANNEL(command[2], command[1]).c_str());
+        server.addmsg_send(server.get_fds()[id].fd, ERR_NOSUCHNICK(command[2]).c_str());
     }
     found = false;
     for (std::vector<int>::iterator go = (*it).getOperators().begin(); go != (*it).getOperators().end(); ++go)

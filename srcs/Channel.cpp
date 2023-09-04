@@ -2,7 +2,6 @@
 
 Channel::Channel(std::string name, int fd, std::string password, int i) : _name(name)
 {
-	//this->_operators.push_back(fd);
 	(void)fd;
 	this->_invite_mode = false;
 	this->_hasLimit = false;
@@ -125,11 +124,6 @@ int Channel::alreadyExist(int fd)
 		if (*ot == fd)
 			return 1;
     }
-	/*for (size_t i = 0; i < this->_users.size(); i++)
-	{
-		if (this->_users[i] == fd)
-			return (1);
-	}*/
 	return (0);
 }
 
@@ -199,14 +193,5 @@ std::string Channel::getListUsers(Server server)
 			txt += " ";
 		}
 	}
-	
-	/*for (size_t i = 0; i < this->_users.size(); i++)
-	{
-		if (isInVector(this->_operators, this->_users[i]))
-			txt += "@";
-		txt += server.getUser(this->_users[i]).returnNickname();
-		txt += " ";
-	}*/
-	std::cout << "liste de users " << txt << std::endl;
 	return (txt);
 }

@@ -217,21 +217,6 @@ Channel* Server::getChannel(std::string name)
 
 void Server::createUser(std::string nickname, int id, int fd)
 {
-    if (!nickname.empty())
-    {
-        for (int f = 1; f > 0;)
-        {
-            f = 0;
-            for (int j = 0; static_cast<std::vector<bool>::size_type>(j) < this->users.size(); j++)
-            {
-                if (nickname == this->users[j].returnNickname() && j != fd)
-                {  
-                    nickname = (nickname + "_").c_str();
-                    f++;
-                }
-            }
-        }     
-    }
     User newUser(nickname, fd, id);
     this->users.push_back(newUser);
 }
@@ -326,12 +311,6 @@ void Server::send_all(std::string msg, Channel chan, int fd_client_actuel)
             continue ;
         send(*it, msg.c_str(), msg.length(), 0);
     }
-    /*for (size_t  i = 0; i < chan.getWhiteList().size(); i++)
-    {
-        if (this->getListensocket() ==  chan.getWhiteList()[i])
-            continue ;
-        send(chan.getWhiteList()[i], msg.c_str(), msg.length(), 0);
-    }*/
 }
 /**************************************************************/
 /*                            Utils                          */
