@@ -218,7 +218,7 @@ int Commands::JOIN(std::vector<std::string> &command, int j, Server &server)
          server.addmsg_send(fd, (":" + server.getUser(fd).returnNickname() + "!"
              + server.getUser(fd).returnUsername() + "@" + server.getUser(fd).returnHostname()  + " JOIN " + chanNames[i] + "\r\n"));
         //MODE message with the current channel's modes;
-        if ((*chan).getTopic().empty())
+        if (!(*chan).getTopic().empty())
             server.addmsg_send(fd, RPL_TOPIC(server.getUser(fd).returnNickname(), chanNames[i], (*chan).getTopic()));
         else
             server.addmsg_send(fd, RPL_NOTOPIC(server.getUser(fd).returnNickname(), chanNames[i]));
